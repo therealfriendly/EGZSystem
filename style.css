@@ -1,0 +1,113 @@
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background: #0d0d0d;
+  color: #f1f1f1;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: linear-gradient(90deg, #ff0066, #ff6600);
+  color: #fff;
+  text-align: center;
+  padding: 1em;
+  font-weight: 700;
+  z-index: 100;
+}
+section {
+  width: 95%;
+  max-width: 500px;
+  margin-top: 1em;
+  padding-bottom: 3em;
+}
+h1,h2,h3{margin:.5em 0;}
+input,select,button{
+  width:100%;padding:.8em 1em;font-size:1em;border:none;border-radius:10px;
+  margin:.4em 0;font-weight:500;outline:none;transition:.2s;
+}
+input,select{
+  background:#1a1a1a;color:#eee;border:1px solid #333;
+}
+button{
+  background:linear-gradient(90deg,#ff0066,#ff6600);
+  color:#fff;font-weight:bold;text-transform:uppercase;border:none;
+  box-shadow:0 3px 8px rgba(255,100,50,0.4);
+}
+button:hover{transform:scale(1.03);}
+.exercise,.catBtn{
+  background:#141414;border:1px solid #222;border-radius:12px;padding:1em;
+  margin:.6em 0;box-shadow:0 2px 5px rgba(0,0,0,0.4);
+}
+.hidden{display:none;}
+#progress{text-align:center;margin-top:1.2em;color:#ff6600;font-weight:bold;}
+#strength{
+  margin-top:2em;background:#111;border-radius:10px;padding:1em;border:1px solid #333;
+}
+#settingsBtn{
+  margin-top:1em;background:#222;border:1px solid #444;
+  color:#ccc;font-size:.9em;border-radius:8px;
+}
+#settingsPanel{
+  margin-top:.5em;background:#111;border:1px solid #222;
+  border-radius:10px;padding:.8em;
+}
+#deleteBtn{
+  background:linear-gradient(90deg,#ff0033,#ff6600);
+  color:white;font-weight:bold;width:100%;
+  border:none;border-radius:8px;padding:1em;
+}
+#deleteBtn:hover{transform:scale(1.05);}
+footer{
+  position:fixed;bottom:0;width:100%;background:#111;text-align:center;
+  padding:.7em;color:#777;font-size:.9em;border-top:1px solid #222;
+}
+
+/* --- Trainingsoverlay --- */
+/* Overlay fix: beim Laden IMMER unsichtbar */
+#trainingOverlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.9);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+}
+
+#trainingOverlay:not(.hidden) {
+  display: flex;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.overlayContent{
+  background:#111;padding:1.2em;border-radius:12px;
+  width:90%;max-width:420px;box-shadow:0 0 15px rgba(255,100,50,0.4);
+  overflow-y:auto;max-height:90%;
+}
+.overlayContent button{
+  margin-top:.8em;
+}
+
+.editBtn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #ff6600;
+  font-size: 0.9em;
+  border-radius: 6px;
+  padding: 0.2em 0.6em;
+  margin-left: 0.3em;
+}
+.editBtn:hover {
+  background: #ff6600;
+  color: #000;
+}

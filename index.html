@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stärke System</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header><h1>EGZ System</h1></header>
+
+  <!-- Übersicht -->
+  <section id="overview">
+    <h2>Übungen</h2>
+    <div id="categoryButtons"></div>
+
+    <h3>Neue Übung</h3>
+    <input id="name" placeholder="Übungsname" />
+    <input id="maxrep" type="number" placeholder="Max Wiederholungen (x1)" />
+    <input id="gewicht" type="number" placeholder="Gewicht (kg)" />
+    <select id="kategorie">
+      <option value="Rücken">Rücken</option>
+      <option value="Brust">Brust</option>
+      <option value="Arme">Arme</option>
+      <option value="Beine">Beine</option>
+      <option value="Schultern">Schultern</option>
+    </select>
+    <button onclick="addExercise()">➕ Übung speichern</button>
+
+    <div id="exercises"></div>
+
+    <div id="strength"></div>
+
+    <button id="settingsBtn" onclick="toggleSettings()">⚙️ Einstellungen</button>
+
+    <div id="settingsPanel" class="hidden">
+      <button id="deleteBtn" onclick="deleteEverything()">🗑️ Alles löschen</button>
+    </div>
+  </section>
+
+<!-- Trainingsmodus (Overlay) -->
+<div id="trainingOverlay" class="hidden">
+  <div class="overlayContent">
+    <h2 id="trainTitle"></h2>
+    <div id="trainInfo"></div>
+    <div id="trainExercises"></div>
+    <div id="progress"></div>
+    <button id="endBtn" onclick="endTraining()">✅ Training beenden</button>
+  </div>
+</div>
+
+  <footer>© 2025 Stärke System – Artur Tscherwinski</footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
