@@ -7,9 +7,10 @@
   "start_url": "./index.html",
   "icons": [
     {
-      "src": "icon512.png",
+      "src": "blitz-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ]
 }
+
