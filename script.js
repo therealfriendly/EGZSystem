@@ -103,7 +103,7 @@ function beginCategoryTraining(cat) {
   let savedZiel = parseFloat(localStorage.getItem(key));
 
   if (savedZiel) {
-    currentZiel = savedZiel * 1.02;
+    currentZiel = savedZiel * 1.05;
   } else {
     const exs = data.filter(e => e.kat === cat);
     const sum1RM = exs.reduce((sum, e) => sum + e.oneRM, 0);
@@ -286,3 +286,4 @@ function toggleSettings() {
 
 
 render();
+
