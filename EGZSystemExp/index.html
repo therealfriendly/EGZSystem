@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>EGZ</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>EGZ</h1>
+</header>
+
+<!-- IDLE -->
+<section id="idleView">
+  <div class="main-buttons">
+    <button onclick="startTraining('Push')">Push</button>
+    <button onclick="startTraining('Pull')">Pull</button>
+    <button onclick="startTraining('Legs')">Legs</button>
+  </div>
+
+  <section class="card">
+    <h2>Gesamttonnage</h2>
+    <div id="totalsList"></div>
+  </section>
+
+  <section class="card">
+    <h2>Trainingsverlauf</h2>
+    <div id="historyList"></div>
+    <button class="danger full" onclick="clearHistory()">Verlauf löschen</button>
+  </section>
+</section>
+
+<!-- TRAINING -->
+<section id="trainingView" class="hidden">
+
+  <h2 id="trainingTitle"></h2>
+
+  <!-- PROGRESSION -->
+  <div id="progressionSelect" class="card">
+    <p>Progression</p>
+    <div class="button-row">
+      <button onclick="selectProgression(0.01)">+1%</button>
+      <button onclick="selectProgression(0.02)">+2%</button>
+      <button onclick="selectProgression(0.05)">+5%</button>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div id="progressArea" class="card"></div>
+
+  <!-- INPUT -->
+  <div id="setInput" class="card hidden">
+
+    <p>Aktiver Muskel: <strong id="activeSubText">–</strong></p>
+
+    <div id="subButtons" class="button-row wrap"></div>
+
+    <div class="input-row">
+      <input id="weight" type="number" inputmode="numeric" placeholder="kg">
+      <input id="reps" type="number" inputmode="numeric" placeholder="Wdh">
+    </div>
+
+    <button class="full" onclick="addSet()">➕ Satz hinzufügen</button>
+  </div>
+
+  <button class="success full" onclick="finishTraining()">Training abschließen</button>
+
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>

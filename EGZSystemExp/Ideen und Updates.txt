@@ -1,0 +1,5 @@
+- Tarkov mäßiges Körperbild mit Rängen
+- 1%, 2% und 5% Trainingsknöpfe (erledigt)
+- auf Push, Pull, Beine begrenzen -> Unterkategorien z.b Push -> Brust, Schulter, Triceps (erledigt)
+- Letzte trainingseinheiten in einem Verlauf, dass man aufrufen kann (erledigt)
+- Bessere UI (erledigt)

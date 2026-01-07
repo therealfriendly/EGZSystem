@@ -1,0 +1,15 @@
+{
+  "name": "EGZ System",
+  "short_name": "EGZ",
+  "display": "standalone",
+  "start_url": ".",
+  "background_color": "#0e0e0e",
+  "theme_color": "#ff7a00",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
