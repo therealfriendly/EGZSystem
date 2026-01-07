@@ -1,11 +1,13 @@
 self.addEventListener("install", e => {
   e.waitUntil(
-    caches.open("egz").then(c =>
-      c.addAll([
+    caches.open("egz-v2").then(cache =>
+      cache.addAll([
         "./",
         "./index.html",
         "./style.css",
-        "./script.js"
+        "./script.js",
+        "./manifest.json",
+        "./blitz-512x512.png"
       ])
     )
   );
