@@ -1,5 +1,7 @@
 # Operator
 
+https://therealfriendly.github.io/EGZSystem/Operator/index.html
+
 Habit Tracker mit Zufallsanteil. Oben rechts steht die Pflicht: eine Checkliste mit
 bis zu drei Punkten, die jeden Tag abgehakt werden muss. Erst wenn sie voll ist, gibt
 die App eine zufällige Karte frei — Schritte, Training, Lernen oder Hacken. Karten sind
