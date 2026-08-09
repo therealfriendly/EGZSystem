@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#070610">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RAID">
+<title>RAID // Real Life Operator</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23070610'/%3E%3Cpath d='M90 22 L154 56 L154 124 L90 158 L26 124 L26 56 Z' fill='none' stroke='%2300e5ff' stroke-width='6'/%3E%3Cpath d='M90 52 L124 71 L124 109 L90 128 L56 109 L56 71 Z' fill='%23ff2e63'/%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIlJBSUQgLy8gUmVhbCBMaWZlIE9wZXJhdG9yIiwgInNob3J0X25hbWUiOiAiUkFJRCIsICJkZXNjcmlwdGlvbiI6ICJadWZhZWxsaWdlIEF1ZnRyYWVnZSBmdWVyIEhhY2tlbiwgVHJhaW5pbmcsIExlcm5lbiB1bmQgRGlzemlwbGluLiBNaXQgWFAsIFJ1YmVsbiB1bmQgU2VyaWUuIiwgInN0YXJ0X3VybCI6ICIuLyIsICJzY29wZSI6ICIuLyIsICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLCAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDcwNjEwIiwgInRoZW1lX2NvbG9yIjogIiMwNzA2MTAiLCAiaWNvbnMiOiBbeyJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJyUzRSUzQ3JlY3Qgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInIGZpbGw9JyUyMzA3MDYxMCcvJTNFJTNDcGF0aCBkPSdNMjU2IDYyIEw0MzggMTU5IEw0MzggMzUzIEwyNTYgNDUwIEw3NCAzNTMgTDc0IDE1OSBaJyBmaWxsPSdub25lJyBzdHJva2U9JyUyMzAwZTVmZicgc3Ryb2tlLXdpZHRoPScxOCcvJTNFJTNDcGF0aCBkPSdNMjU2IDE0OCBMMzUzIDIwMCBMMzUzIDMwNCBMMjU2IDM1NiBMMTU5IDMwNCBMMTU5IDIwMCBaJyBmaWxsPSclMjNmZjJlNjMnLyUzRSUzQy9zdmclM0UiLCAic2l6ZXMiOiAiYW55IiwgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsICJwdXJwb3NlIjogImFueSJ9XX0=">
+<style>
+:root{
+  --bg:#070610; --bg2:#0b0918; --panel:#100e1f; --line:#241f3c; --line2:#372f58;
+  --txt:#efedfb; --dim:#918bb4; --dim2:#615a86;
+  --hack:#00e5ff; --eisen:#ff2e63; --wissen:#a86bff; --bauen:#00ffa3; --disziplin:#ffc233;
+  --acc:#ffc233; --accRGB:255,194,51;
+  --danger:#ff2e63; --ok:#00ffa3;
+  --f-head:"Avenir Next Condensed","Oswald","Arial Narrow","Roboto Condensed",Impact,sans-serif;
+  --f-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--txt)}
+body{
+  font-family:var(--f-mono);font-size:14px;line-height:1.45;min-height:100vh;overscroll-behavior-y:none;
+  background:
+    radial-gradient(70% 45% at 8% 0%, rgba(0,229,255,.16), transparent 60%),
+    radial-gradient(60% 40% at 100% 22%, rgba(255,46,99,.14), transparent 62%),
+    radial-gradient(80% 50% at 50% 105%, rgba(168,107,255,.16), transparent 65%),
+    var(--bg);
+  background-attachment:fixed;
+  padding:calc(env(safe-area-inset-top) + 64px) 0 calc(env(safe-area-inset-bottom) + 76px);
+  transition:background .8s ease;
+}
+#grain{position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.4;
+  background:repeating-linear-gradient(180deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+#vig{position:fixed;inset:0;pointer-events:none;z-index:89;
+  background:radial-gradient(135% 95% at 50% 40%,transparent 52%,rgba(3,2,8,.8))}
+h1,h2,h3,.head{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0}
+.wrap{padding:0 13px;max-width:640px;margin:0 auto}
+
+/* ---------- HUD ---------- */
+#hud{position:fixed;top:0;left:0;right:0;z-index:80;padding-top:env(safe-area-inset-top);
+  background:linear-gradient(180deg,rgba(7,6,16,.98) 72%,rgba(7,6,16,0));
+  border-bottom:1px solid var(--line)}
+#hud::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,var(--hack),var(--bauen),var(--disziplin),var(--eisen),var(--wissen));opacity:.75}
+.hudrow{display:flex;align-items:center;gap:10px;padding:8px 13px 9px;max-width:640px;margin:0 auto}
+.ring{width:44px;height:44px;flex:0 0 44px;border-radius:50%;display:grid;place-items:center;position:relative;
+  background:conic-gradient(var(--rc,#ffc233) calc(var(--p,0)*1%),rgba(255,255,255,.06) 0);
+  transition:background .5s ease}
+.ring::before{content:"";position:absolute;inset:3px;border-radius:50%;background:#0a0814;border:1px solid var(--line)}
+.ring span{position:relative;font-family:var(--f-head);font-size:18px;line-height:1;color:var(--rc,#ffc233)}
+.hudmid{flex:1;min-width:0}
+.rank{font-family:var(--f-head);font-size:15.5px;letter-spacing:.11em;color:var(--rc,#ffc233);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 14px rgba(255,255,255,.12)}
+.xpbar{height:6px;background:#16122a;border:1px solid var(--line);margin-top:4px;position:relative;overflow:hidden}
+.xpbar i{display:block;height:100%;width:0;transition:width .7s cubic-bezier(.2,.9,.2,1);
+  background:linear-gradient(90deg,var(--hack),var(--bauen) 35%,var(--disziplin) 62%,var(--eisen) 84%,var(--wissen));
+  box-shadow:0 0 12px rgba(255,255,255,.25)}
+.xpnum{font-size:9.5px;color:var(--dim2);letter-spacing:.08em;margin-top:2px}
+.stat{text-align:right;font-family:var(--f-head);font-size:16px;letter-spacing:.03em;line-height:1.05}
+.stat b{display:block;font-weight:700}
+.stat small{display:block;font-family:var(--f-mono);font-size:8.5px;letter-spacing:.13em;color:var(--dim2);font-weight:400}
+#rub{color:var(--disziplin)} #stk{color:var(--eisen)}
+
+/* ---------- Panels ---------- */
+.panel{background:linear-gradient(158deg,var(--panel),#0a0814 85%);border:1px solid var(--line);
+  border-radius:2px;padding:13px;margin-bottom:11px;position:relative;overflow:hidden}
+.panel::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;
+  background:linear-gradient(90deg,var(--acc),transparent 70%);opacity:.9}
+.eyebrow{font-size:9.5px;letter-spacing:.22em;color:var(--dim2);text-transform:uppercase;margin-bottom:9px;
+  display:flex;justify-content:space-between;align-items:center;gap:8px}
+.eyebrow b{color:var(--acc);font-weight:400}
+
+/* ---------- Buttons ---------- */
+.btn{display:block;width:100%;border:1px solid var(--acc);background:rgba(var(--accRGB),.1);color:var(--acc);
+  font-family:var(--f-head);font-size:20px;letter-spacing:.14em;text-transform:uppercase;padding:15px 10px;
+  border-radius:2px;cursor:pointer;transition:transform .08s,background .25s,box-shadow .25s,border-color .25s,color .25s;
+  box-shadow:0 0 18px rgba(var(--accRGB),.12), inset 0 0 22px rgba(var(--accRGB),.05)}
+.btn:active{transform:scale(.985);background:rgba(var(--accRGB),.22);box-shadow:0 0 34px rgba(var(--accRGB),.3)}
+.btn.ghost{border-color:var(--line2);color:var(--dim);background:transparent;font-size:15px;padding:12px 10px;box-shadow:none}
+.btn.ghost:active{background:rgba(255,255,255,.05)}
+.btn.ok{border-color:var(--ok);color:var(--ok);background:rgba(0,255,163,.1);box-shadow:0 0 20px rgba(0,255,163,.16)}
+.btn.warn{border-color:#5f4a1c;color:var(--disziplin);
+  background:repeating-linear-gradient(45deg,rgba(255,194,51,.09) 0 8px,transparent 8px 16px);box-shadow:none}
+.btn:disabled{opacity:.35;pointer-events:none}
+.btnrow{display:flex;gap:8px}.btnrow>*{flex:1}
+.mini{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:9px 10px;
+  border:1px solid var(--line2);background:transparent;color:var(--dim);cursor:pointer;border-radius:2px;transition:.2s}
+.mini:active{background:rgba(255,255,255,.06)}
+.mini.on{border-color:var(--cc,var(--acc));color:var(--cc,var(--acc));background:rgba(255,255,255,.05);
+  box-shadow:0 0 14px -4px var(--cc,var(--acc))}
+
+/* ---------- Questkarte ---------- */
+#slot{min-height:300px;display:flex;flex-direction:column;justify-content:center}
+.idle{text-align:center;padding:30px 8px}
+.idle .mark{font-family:var(--f-head);font-size:60px;letter-spacing:.06em;line-height:.9;
+  background:linear-gradient(90deg,var(--hack),var(--wissen),var(--eisen));-webkit-background-clip:text;
+  background-clip:text;color:transparent;opacity:.55}
+.idle p{color:var(--dim2);font-size:12px;letter-spacing:.05em;margin:12px 0 0}
+.qcard{animation:drop .45s cubic-bezier(.18,.9,.25,1);border-left:3px solid var(--cc);
+  background:linear-gradient(120deg,rgba(255,255,255,.045),transparent 55%);padding:12px 12px 12px 13px;margin:-4px 0 12px;border-radius:2px}
+@keyframes drop{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px}
+.tag{font-size:9.5px;letter-spacing:.18em;padding:4px 9px;border:1px solid currentColor;text-transform:uppercase;border-radius:2px}
+.tag.solid{background:var(--cc);color:#0a0814;border-color:var(--cc);font-weight:700}
+.qtitle{font-family:var(--f-head);font-size:31px;line-height:1.02;margin:2px 0 9px;color:var(--cc);
+  text-shadow:0 0 26px rgba(255,255,255,.14)}
+.qstory{color:var(--dim);font-size:13px;padding-left:0;margin-bottom:13px}
+.qmeta{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.chip{font-size:10.5px;letter-spacing:.09em;color:var(--dim);border:1px solid var(--line);padding:5px 9px;
+  background:rgba(255,255,255,.03);border-radius:2px}
+.chip b{color:var(--txt);font-weight:400}
+.rolling .qtitle{animation:glitch .1s infinite}
+@keyframes glitch{0%{transform:translate(0)}33%{transform:translate(-2px,1px)}66%{transform:translate(2px,-1px)}100%{transform:translate(0)}}
+.d1{color:#00ffa3}.d2{color:#00e5ff}.d3{color:#ffc233}.d4{color:#ff8a3d}.d5{color:#ff2e63}
+
+.timer{display:flex;align-items:center;gap:11px;border:1px solid var(--line);background:rgba(0,0,0,.35);
+  padding:10px 11px;margin-bottom:12px;border-radius:2px}
+.tnum{font-family:var(--f-head);font-size:29px;letter-spacing:.03em;color:var(--cc);min-width:92px}
+.tbar{flex:1;height:4px;background:#16122a;overflow:hidden}
+.tbar i{display:block;height:100%;background:var(--cc);width:0;transition:width 1s linear;box-shadow:0 0 10px var(--cc)}
+
+/* ---------- Nav ---------- */
+#nav{position:fixed;bottom:0;left:0;right:0;z-index:80;display:flex;padding-bottom:env(safe-area-inset-bottom);
+  background:rgba(7,6,16,.97);border-top:1px solid var(--line);backdrop-filter:blur(10px)}
+#nav button{flex:1;background:none;border:0;color:var(--dim2);padding:9px 2px 11px;cursor:pointer;
+  font-family:var(--f-head);font-size:12.5px;letter-spacing:.13em;text-transform:uppercase;position:relative;transition:color .2s}
+#nav button i{display:block;font-style:normal;font-size:17px;margin-bottom:2px}
+#nav button.on{color:var(--tc)}
+#nav button.on::before{content:"";position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--tc);box-shadow:0 0 14px var(--tc)}
+.screen{display:none}.screen.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---------- Kalender ---------- */
+.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.calhead b{font-family:var(--f-head);font-size:18px;letter-spacing:.09em}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .dow{font-size:9px;color:var(--dim2);text-align:center;letter-spacing:.1em;padding-bottom:2px}
+.day{aspect-ratio:1;border:1px solid var(--line);background:rgba(255,255,255,.02);display:grid;place-items:center;
+  font-size:11px;color:var(--dim2);position:relative;cursor:pointer;border-radius:2px;transition:.2s}
+.day.empty{border-color:transparent;background:none}
+.day.done{color:#0a0814;font-weight:700;border-color:transparent}
+.day.frozen{border-color:var(--hack);background:rgba(0,229,255,.16);color:var(--hack)}
+.day.today{outline:1px solid var(--txt);outline-offset:1px}
+.day.sel{outline:2px solid var(--acc);outline-offset:1px}
+.day em{position:absolute;bottom:1px;right:3px;font-style:normal;font-size:8px;opacity:.75}
+
+/* ---------- Listen ---------- */
+.row{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .g{flex:1;min-width:0}
+.row .t{font-size:12.5px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .s{font-size:10px;color:var(--dim2);letter-spacing:.07em;text-transform:uppercase}
+.row .v{font-size:11px;text-align:right;white-space:nowrap;color:var(--dim)}
+.empty-note{color:var(--dim2);font-size:12px;text-align:center;padding:18px 6px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:66px;margin-top:6px}
+.bars div{flex:1;min-height:3px;border-radius:1px 1px 0 0}
+.dist .l{display:flex;justify-content:space-between;font-size:10.5px;color:var(--dim);margin:8px 0 3px;letter-spacing:.07em}
+.dist .b{height:5px;background:#16122a;border-radius:2px;overflow:hidden}.dist .b i{display:block;height:100%}
+.item{display:flex;gap:11px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .ic{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border:1px solid var(--line2);
+  font-size:16px;color:var(--acc);border-radius:2px}
+.item .g{flex:1;min-width:0}
+.item .n{font-family:var(--f-head);font-size:15px;letter-spacing:.05em}
+.item .d{font-size:10.5px;color:var(--dim2);line-height:1.35}
+
+/* ---------- Overlays ---------- */
+#toast{position:fixed;left:13px;right:13px;bottom:calc(env(safe-area-inset-bottom) + 80px);z-index:95;
+  pointer-events:none;display:flex;flex-direction:column;gap:6px;align-items:center}
+.tst{background:#120f22;border:1px solid var(--line2);border-left:3px solid var(--acc);padding:9px 14px;
+  font-size:12px;animation:tin .3s ease;box-shadow:0 12px 34px rgba(0,0,0,.7);border-radius:2px}
+.tst.bad{border-left-color:var(--danger);color:#ffb3c4}
+.tst.good{border-left-color:var(--ok)}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#flash{position:fixed;inset:0;z-index:96;display:none;place-items:center;text-align:center;padding:24px;
+  background:radial-gradient(60% 50% at 50% 45%,rgba(var(--accRGB),.18),rgba(7,6,16,.96) 70%)}
+#flash.on{display:grid;animation:fade .3s ease}
+#flash .lvl{font-family:var(--f-head);font-size:13px;letter-spacing:.42em;color:var(--dim)}
+#flash .big{font-family:var(--f-head);font-size:64px;line-height:.95;color:var(--rc,#ffc233);margin:6px 0;
+  text-shadow:0 0 50px currentColor}
+#flash .sub{color:var(--txt);font-size:14px;letter-spacing:.14em}
+.loot{position:fixed;left:0;right:0;top:36%;z-index:95;text-align:center;pointer-events:none;
+  font-family:var(--f-head);font-size:40px;color:var(--ok);text-shadow:0 0 34px currentColor;animation:lootup 1.15s ease forwards}
+@keyframes lootup{0%{opacity:0;transform:translateY(20px) scale(.9)}20%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-42px)}}
+textarea{width:100%;height:104px;background:rgba(0,0,0,.4);border:1px solid var(--line);color:var(--dim);
+  font-family:var(--f-mono);font-size:10px;padding:8px;border-radius:2px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</head>
+<body>
+<div id="grain"></div><div id="vig"></div>
+
+<header id="hud">
+  <div class="hudrow">
+    <div class="ring" id="ring"><span id="lvl">1</span></div>
+    <div class="hudmid">
+      <div class="rank" id="rank">WILD</div>
+      <div class="xpbar"><i id="xpfill"></i></div>
+      <div class="xpnum" id="xpnum">0 / 150 XP</div>
+    </div>
+    <div class="stat"><b id="rub">0</b><small>Rubel</small></div>
+    <div class="stat"><b id="stk">0</b><small>Serie</small></div>
+  </div>
+</header>
+
+<section class="screen on" id="s-run">
+  <div class="wrap">
+    <div class="panel">
+      <div class="eyebrow"><span id="dstat">Kein Raid heute</span><b id="dcount">0 extrahiert</b></div>
+      <div id="slot">
+        <div class="idle"><div class="mark">// RAID</div><p>Auftragsboard bereit. Zieh dir einen Job.</p></div>
+      </div>
+      <div id="controls"><button class="btn" id="draw">Raid starten</button></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow"><span>Einsatzfelder</span><b id="fcount"></b></div>
+      <div id="cats" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s-log">
+  <div class="wrap">
+    <div class="panel">
+      <div class="calhead">
+        <button class="mini" id="prevM">◀</button><b id="monthLbl">—</b><button class="mini" id="nextM">▶</button>
+      </div>
+      <div class="cal" id="cal"></div>
+      <div class="eyebrow" style="margin:12px 0 0">
+        <span>Serie <b id="sk1">0</b> Tage · Rekord <b id="sk2">0</b></span><b id="freezeInfo">0 Versicherung</b>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow"><span id="dayLbl">Heute</span><b id="dayXp"></b></div>
+      <div id="dayList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s-shop">
+  <div class="wrap">
+    <div class="panel">
+      <div class="eyebrow"><span>Händler</span><b><span id="rub2">0</span> ₽</b></div>
+      <div id="shopList"></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow"><span>Rangleiter</span></div>
+      <div id="ladder"></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s-me">
+  <div class="wrap">
+    <div class="panel">
+      <div class="eyebrow"><span>Operator-Akte</span><b id="meRank">—</b></div>
+      <div id="meStats"></div>
+    </div>
+    <div class="panel"><div class="eyebrow"><span>Letzte 14 Tage</span></div><div class="bars" id="bars"></div></div>
+    <div class="panel"><div class="eyebrow"><span>Einsatzverteilung</span></div><div class="dist" id="dist"></div></div>
+    <div class="panel"><div class="eyebrow"><span>Raid-Protokoll</span><b id="histCount"></b></div><div id="hist"></div></div>
+    <div class="panel">
+      <div class="eyebrow"><span>Daten</span></div>
+      <div class="btnrow" style="margin-bottom:8px">
+        <button class="mini" id="expBtn">Export</button>
+        <button class="mini" id="impBtn">Import</button>
+        <button class="mini" id="sndBtn">Sound</button>
+      </div>
+      <textarea id="io" placeholder="Sicherung: Export drücken, Text kopieren. Zum Zurückspielen Text einfügen und Import drücken."></textarea>
+      <button class="mini" id="resetBtn" style="margin-top:8px;width:100%;border-color:#57202f;color:#ff7d99">Alles löschen</button>
+    </div>
+  </div>
+</section>
+
+<div id="toast"></div>
+<div id="flash"><div>
+  <div class="lvl">Rangaufstieg</div>
+  <div class="big" id="flashBig">2</div>
+  <div class="sub" id="flashSub">—</div>
+  <button class="mini" style="margin-top:20px;padding:11px 24px" id="flashOk">Weiter</button>
+</div></div>
+
+<nav id="nav">
+  <button data-s="s-run" class="on" style="--tc:#ffc233"><i>◈</i>Raid</button>
+  <button data-s="s-log" style="--tc:#00e5ff"><i>▦</i>Log</button>
+  <button data-s="s-shop" style="--tc:#00ffa3"><i>₽</i>Händler</button>
+  <button data-s="s-me" style="--tc:#a86bff"><i>◉</i>Akte</button>
+</nav>
+
+<script>
+/* ============================================================
+   EINSATZFELDER + AUFTRAGSBOARD
+   [titel, briefing, feld, schwierigkeit, minuten]
+   ============================================================ */
+const CATS = {
+  HACK     : {n:"Hack",      c:"#00e5ff", i:"⌁"},
+  EISEN    : {n:"Eisen",     c:"#ff2e63", i:"▲"},
+  WISSEN   : {n:"Wissen",    c:"#a86bff", i:"≡"},
+  BAUEN    : {n:"Bauen",     c:"#00ffa3", i:"✦"},
+  DISZIPLIN: {n:"Disziplin", c:"#ffc233", i:"◆"}
+};
+const DIFF = ["","Leicht","Normal","Schwer","Brutal","Insane"];
+
+const QUESTS = [
+/* ================= HACK ================= */
+["Erstkontakt","Irgendeine Flagge, irgendeine Plattform. Der Händler will nur sehen, ob du lieferst. Löse eine CTF.","HACK",3,0],
+["Aufwärmen","Offene Tür, kein Alarm. Löse eine leichte CTF.","HACK",2,0],
+["Zweite Ebene","Die Box hat mehr Schichten als im Briefing steht. Löse eine CTF auf Medium.","HACK",3,0],
+["Eisbrecher","Kein Walkthrough, kein Discord. Löse eine CTF auf Hard, allein.","HACK",4,0],
+["Schwarzes Eis","Der Auftrag, den keiner annimmt. Löse eine CTF auf Insane.","HACK",5,0],
+["Vollzugriff","Eine Maschine, zwei Flags. User und Root, sonst zählt es nicht.","HACK",4,0],
+["Einstiegspunkt","Eine Anfänger-Box vom Stapel, sauber durchgezogen und verstanden.","HACK",2,0],
+["Fremder Raum","Ein Lernraum, den du noch nie angefasst hast. Komplett abschließen.","HACK",2,0],
+["Kalte Spur","Eine alte, zurückgezogene Box knacken — ohne die Lösung vorher zu lesen.","HACK",4,0],
+["Injektion","Eine SQL-Injection-Challenge lösen und danach erklären können, warum sie funktioniert.","HACK",3,0],
+["Fremdes Skript","Eine XSS-Challenge lösen. Payload selbst bauen, nicht kopieren.","HACK",3,0],
+["Umleitung","SSRF oder IDOR: eine Challenge, bei der du fremde Daten erreichst, die dir nicht gehören.","HACK",4,0],
+["Gefälschter Ausweis","Eine Auth- oder JWT-Challenge. Token verstehen, dann brechen.","HACK",4,0],
+["Aufstieg","Linux Privilege Escalation im Lab. Erst manuell suchen, dann erst das Skript laufen lassen.","HACK",4,0],
+["Fremdes Haus","Windows Privilege Escalation im Lab. Ein Weg reicht, aber du musst ihn erklären können.","HACK",4,0],
+["Domäne","Active Directory Lab: eine komplette Angriffskette von Fuß in der Tür bis Domain Admin.","HACK",5,0],
+["Rückwärts lesen","Ein Crackme aufmachen. Nicht raten — den Code lesen.","HACK",4,0],
+["Überlauf","Ein Buffer Overflow im eigenen Lab, von Absturz bis Shell.","HACK",5,0],
+["Zahlenspiel","Eine Krypto-Challenge lösen. Papier und Stift sind erlaubt.","HACK",3,0],
+["Mitschnitt","Ein pcap analysieren und rekonstruieren, was da passiert ist.","HACK",3,0],
+["Versteckte Fracht","Eine Stego-Challenge. Die Datei ist größer, als sie sein müsste.","HACK",2,0],
+["Personensuche","Eine OSINT-Challenge lösen. Nur öffentliche Quellen, sauber dokumentiert.","HACK",3,0],
+["Schlüsseldienst","Wortliste plus eigenes Regelwerk bauen und einen Hash im Lab knacken.","HACK",3,0],
+["Kartografie","Alle wichtigen Scan-Typen im eigenen Netz durchspielen und den Unterschied notieren.","HACK",2,30],
+["Zange","Eine eigene Testanwendung durch den Proxy jagen: abfangen, verändern, wiederholen.","HACK",3,0],
+["Eigenes Revier","Bau dir eine verwundbare VM auf und knack sie danach selbst.","HACK",4,0],
+["Ohne Krücken","Ein Ziel zweimal übernehmen: einmal mit Framework, einmal komplett von Hand.","HACK",5,0],
+["Aktennotiz","Schreib ein Write-up zu einer gelösten Challenge. Fremde sollen es nachbauen können.","HACK",3,0],
+["Wolkendecke","Ein Cloud-Security-Modul durcharbeiten und im eigenen Konto nachbauen.","HACK",3,0],
+["Ausbruch","Container-Lab: aus dem Container raus auf den Host.","HACK",5,0],
+["Leitungsüberwachung","20 Minuten eigenen Netzwerkverkehr mitschneiden und lesen, was deine Geräte reden.","HACK",2,20],
+["Schwachstellenakte","Ein aktuelles CVE lesen, bis du den Fehler wirklich verstanden hast. PoC anschauen, nicht nur klicken.","HACK",3,0],
+["Ohne Suchmaschine","30 Minuten Terminal, nur man pages und --help. Keine Suchmaschine, kein Chatfenster.","HACK",3,30],
+["Eigene Festung","Deine Kiste härten: Updates, Firewall, SSH-Keys, unnötige Dienste raus.","HACK",2,0],
+["Schlüsselwechsel","Passwort-Audit über alle Accounts, 2FA überall nachziehen.","HACK",2,0],
+["Sichtprüfung","Ein fremdes Skript vor dem Ausführen komplett lesen und verstehen. Zeile für Zeile.","HACK",2,0],
+
+/* ================= EISEN ================= */
+["Bis zum Versagen","Die Stange gibt nicht nach, du irgendwann schon. Klimmzüge bis zum Schluss.","EISEN",4,0],
+["Boden gutmachen","Runter, hoch, wiederholen, bis nichts mehr geht. Liegestütze bis zum Schluss.","EISEN",3,0],
+["Fundament","Ohne Beine trägt dich gar nichts. Volles Beintraining, keine Ausreden.","EISEN",4,0],
+["Absenken","Dips bis zum Muskelversagen. Sauber, nicht gefallen.","EISEN",4,0],
+["Eine mehr","Klimmzüge: dein bisheriges Maximum schlagen. Eine einzige Wiederholung mehr reicht.","EISEN",4,0],
+["Hundert","100 Liegestütze bis Mitternacht. Sätze egal, Summe zählt.","EISEN",3,0],
+["Fünfzig","50 Klimmzüge über den Tag verteilt.","EISEN",4,0],
+["Streifengang","5.000 Schritte. Heute noch, nicht morgen.","EISEN",1,0],
+["Langer Marsch","10.000 Schritte. Wetter zählt nicht als Argument.","EISEN",3,0],
+["Dauerlauf","30 Minuten am Stück laufen. Tempo egal, Stehenbleiben nicht.","EISEN",3,30],
+["Sprintserie","8 mal 30 Sekunden alles geben, dazwischen gehen.","EISEN",4,0],
+["Fünf Kilometer","5 km am Stück. Zeit notieren, beim nächsten Mal unterbieten.","EISEN",4,0],
+["Ganzkörper","Drücken, Ziehen, Beine — eine komplette Einheit an einem Stück.","EISEN",4,0],
+["Drücken","Brust und Schulter, schwere Einheit. Letzter Satz muss wehtun.","EISEN",3,0],
+["Ziehen","Rudern und Latzug schwer. Ein starker Rücken hält dich gerade.","EISEN",3,0],
+["Mittelteil","Vier Bauchübungen, drei Runden, kurze Pausen.","EISEN",2,0],
+["Stellung halten","Plank auf maximale Zeit. Drei Versuche, bestes Ergebnis notieren.","EISEN",2,0],
+["Hohles Boot","Hollow Hold, drei Sätze bis es brennt.","EISEN",2,0],
+["Tiefgang","50 Kniebeugen, sauber tief, nicht geschummelt.","EISEN",2,0],
+["Einbeinig","Pistol Squats üben. Wenn es noch nicht geht: an der Progression arbeiten.","EISEN",4,0],
+["Kopfüber","10 Minuten Handstand üben. Wand ist erlaubt.","EISEN",3,10],
+["Vollkontakt","20 Burpees. Die schlimmste Übung, die es gratis gibt.","EISEN",3,0],
+["Seile lockern","15 Minuten dehnen. Verkürzte Muskeln kosten dich später Zeit.","EISEN",1,15],
+["Beweglichkeit","Hüfte und Schultern mobilisieren, 10 Minuten. Danach sitzt du besser.","EISEN",1,10],
+["Bildschirmschaden","Nacken, Handgelenke, Unterarme. 10 Minuten gegen die Tastaturhaltung.","EISEN",1,10],
+["Griffkraft","Wer nicht halten kann, verliert die Beute. 10 Minuten Griff und Unterarme.","EISEN",1,10],
+["Zwei Räder","10 Kilometer auf dem Rad.","EISEN",3,0],
+["Schattenkampf","Drei Runden à drei Minuten gegen niemanden. Hände hoch, Beine mitnehmen.","EISEN",2,0],
+["Schwere Last","Etwas Schweres eine lange Strecke tragen. Rucksack, Kisten, egal.","EISEN",2,0],
+["Waden","Der Teil, den alle vergessen. Drei Sätze bis zum Brennen.","EISEN",1,0],
+["Kalter Start","Direkt nach dem Aufstehen 20 Wiederholungen von irgendwas. Bevor der Kopf mitredet.","EISEN",1,0],
+["Ein Satz mehr","Nimm eine Übung von letzter Woche und mach einen Satz oder ein Kilo mehr.","EISEN",3,0],
+["Trainingslog","Schreib heute jeden Satz mit. Gewicht, Wiederholungen, Gefühl.","EISEN",1,0],
+["Treppendienst","Den ganzen Tag nur Treppen. Jede einzelne.","EISEN",1,0],
+
+/* ================= WISSEN ================= */
+["Tiefes Studium","50 Minuten in ein Thema deiner Wahl. Tür zu, Benachrichtigungen aus.","WISSEN",3,50],
+["Kurzer Block","25 Minuten volle Konzentration auf eine Sache. Danach ist Schluss.","WISSEN",1,25],
+["Langer Block","90 Minuten am Stück an einem Thema. Ein Ergebnis am Ende, kein Herumlesen.","WISSEN",4,90],
+["Aus dem Archiv","Ein Kapitel Fachbuch. Papier oder PDF, aber ganz.","WISSEN",2,0],
+["Fachartikel","Ein Paper lesen und in fünf eigenen Sätzen zusammenfassen.","WISSEN",3,0],
+["Quelltext lesen","30 Minuten offizielle Doku statt Suchmaschine. Lesen, nicht überfliegen.","WISSEN",2,30],
+["Erklär es mir","Erklär jemandem ein Thema, bis er es versteht. Wo du hängst, hast du es selbst nicht.","WISSEN",2,0],
+["Begriffsarbeit","20 Fachbegriffe lernen, die dir immer wieder begegnen. Danach abfragen lassen.","WISSEN",2,0],
+["Kartenstapel","20 Karteikarten zu einem Thema bauen, das du bald brauchst.","WISSEN",2,0],
+["Aktiv abrufen","45 Minuten alten Stoff abfragen, ohne ins Skript zu schauen. Erst danach nachschlagen.","WISSEN",3,45],
+["Pflichtprogramm","Ein Übungsblatt oder eine Aufgabe für die Hochschule komplett fertig machen.","WISSEN",3,0],
+["Ernstfall","Alte Klausur oder Prüfungssimulation unter Zeitdruck. Uhr läuft mit.","WISSEN",4,0],
+["Neues Terrain","Ein völlig neues Thema in 60 Minuten grob kartieren: Begriffe, Zusammenhänge, offene Fragen.","WISSEN",3,60],
+["Zweite Sprache","20 Minuten in einer Sprache, die nicht deine ist.","WISSEN",1,20],
+["Rechenarbeit","10 Aufgaben Mathe oder Logik. Ohne Taschenrechner, wo es geht.","WISSEN",3,0],
+["Netzgrundlagen","Netzwerkbasis wiederholen: Schichten, Handshake, Routing. Aus dem Kopf aufmalen.","WISSEN",2,0],
+["Zehn Befehle","Zehn Terminal-Befehle lernen, die du noch nicht kanntest, und alle einmal benutzen.","WISSEN",2,0],
+["Aufzeichnung","Ein Konzept aufmalen, bis das Diagramm ohne Text verständlich ist.","WISSEN",2,0],
+["Nachbauen statt zuschauen","Ein Tutorial ganz durchziehen und danach ohne Anleitung nachbauen.","WISSEN",3,0],
+["Richtung Zertifikat","Ein Modul auf dem Weg zu einer Zertifizierung durcharbeiten.","WISSEN",3,0],
+["Ordnung im Kopf","Notizen der letzten Woche zu einer Seite Zusammenfassung eindampfen.","WISSEN",2,0],
+["Gegenrede","Such dir bewusst eine Quelle, die deiner Meinung widerspricht, und lies sie zu Ende.","WISSEN",2,0],
+["Fehlerprotokoll","Schreib auf, was du diese Woche falsch verstanden hast, und korrigier es.","WISSEN",2,0],
+
+/* ================= BAUEN ================= */
+["Nachtschicht","60 Minuten am eigenen Projekt bauen. Ein Ergebnis, kein Herumklicken.","BAUEN",3,60],
+["Ausliefern","Ein Feature fertig machen und committen. Fertig heißt: es läuft.","BAUEN",3,0],
+["Störfeuer","Der Bug, der dich seit Tagen nervt. Heute stirbt er.","BAUEN",3,0],
+["Automatik","Ein Skript schreiben, das dir eine nervige Handarbeit abnimmt.","BAUEN",3,0],
+["Eigenes Werkzeug","Bau dir ein kleines Tool für deine Recon oder deinen Workflow.","BAUEN",4,0],
+["Aufräumkommando","Eine Datei refactoren. Weniger Zeilen, gleiche Funktion.","BAUEN",2,0],
+["Absicherung","Tests für Code schreiben, bei dem du bisher nur gehofft hast, dass er läuft.","BAUEN",3,0],
+["Bedienungsanleitung","Eine README schreiben, die in einem Jahr noch erklärt, was das Ding tut.","BAUEN",2,0],
+["Neues Werkzeug","Fremde Sprache oder fremdes Framework: Hello World plus ein echtes Feature.","BAUEN",3,0],
+["Werkbank","Dotfiles, Aliase und Konfiguration aufräumen. Dein System soll dir gehorchen.","BAUEN",2,0],
+["Saubere Historie","Ein Branch, lesbare Commits, sauber gemerged. Kein 'fix fix final'.","BAUEN",2,0],
+["Ausrollen","Ein kleines Projekt live bringen, sodass es jemand anders aufrufen kann.","BAUEN",4,0],
+["Fremder Code","Fremden Code lesen, bis du ihn erklären könntest. Ein echtes Repository, keine Beispiele.","BAUEN",3,0],
+["Ausgrabung","Ein altes Projekt rauskramen und genau einen Schritt fertig machen.","BAUEN",2,0],
+["Bauplan","Skizziere eine Idee auf Papier, bevor du eine Zeile Code schreibst.","BAUEN",1,0],
+["Sendebericht","Schreib öffentlich auf, was du zuletzt gebaut oder gelernt hast.","BAUEN",3,0],
+
+/* ================= DISZIPLIN ================= */
+["Sofort raus","Beim ersten Wecker aufstehen. Kein zweiter Versuch.","DISZIPLIN",2,0],
+["Nachtruhe","Heute vor Mitternacht im Bett. Bildschirm vorher aus.","DISZIPLIN",2,0],
+["Sendepause","Eine Stunde komplett ohne Handy, wach und bewusst.","DISZIPLIN",2,60],
+["Funkstille bis Mittag","Bis mittags kein Social Media. Nachrichten sind erlaubt.","DISZIPLIN",2,0],
+["Das Schlimmste zuerst","Die Aufgabe, die du am meisten schiebst, als Erstes am Tag erledigen.","DISZIPLIN",3,0],
+["Zehn Minuten Stille","10 Minuten sitzen und atmen. Nichts leisten, nichts konsumieren.","DISZIPLIN",1,10],
+["Ohne Ton","30 Minuten arbeiten ohne Musik, Podcast oder Hintergrundvideo.","DISZIPLIN",2,30],
+["Alle Signale aus","Benachrichtigungen für den ganzen Tag abschalten. Alle.","DISZIPLIN",2,0],
+["Erste halbe Stunde","Nach dem Aufwachen 30 Minuten kein Handy anfassen.","DISZIPLIN",2,0],
+["Wasserlinie","Zwei Liter Wasser über den Tag. Mitzählen.","DISZIPLIN",1,0],
+["Ohne Booster","Ein Tag ohne Energydrink. Kaffee ist Verhandlungssache.","DISZIPLIN",2,0],
+["Selbst gekocht","Heute selbst kochen statt bestellen. Auch wenn es simpel ist.","DISZIPLIN",2,0],
+["Draußenluft","20 Minuten draußen ohne Kopfhörer. Nur zuhören, was da ist.","DISZIPLIN",1,20],
+["Logbuch","Zehn Sätze über den Tag aufschreiben. Ehrlich, nicht schön.","DISZIPLIN",1,0],
+["Marschbefehl","Abends den Plan für morgen schreiben: drei Dinge, sonst nichts.","DISZIPLIN",1,0],
+["Wochenplan","Trainings- und Lernplan für die kommende Woche festlegen.","DISZIPLIN",2,0],
+["Halb fertig","Eine angefangene Sache zu Ende bringen, bevor du etwas Neues startest.","DISZIPLIN",3,0],
+["Bildschirmzeit","Deine Bildschirmzeit anschauen und für die schlimmste App ein echtes Limit setzen.","DISZIPLIN",1,0],
+["Kopf leeren","Alles aufschreiben, was dir im Kopf herumliegt. Ungefiltert, eine Liste.","DISZIPLIN",1,0],
+["Drei Treffer","Drei Dinge aufschreiben, die heute funktioniert haben. Auch kleine.","DISZIPLIN",1,0],
+["Ohne Ablenkung essen","Eine Mahlzeit ohne Bildschirm. Nur essen.","DISZIPLIN",1,0],
+["Kein Aufschub","Etwas, das unter zwei Minuten dauert, sofort erledigen. Den ganzen Tag lang.","DISZIPLIN",2,0]
+];
+
+/* ============================================================
+   RANGLEITER
+   ============================================================ */
+const RANKS = [
+  ["Wild","#8b86ab"],["Scav","#8b86ab"],["Trupp-Scav","#00ffa3"],["PMC-Neuling","#00ffa3"],
+  ["USEC","#00e5ff"],["BEAR","#00e5ff"],["Raider","#00e5ff"],["Rogue","#a86bff"],
+  ["Sektant","#a86bff"],["Killa","#a86bff"],["Tagilla","#a86bff"],["Reshala","#ff2e63"],
+  ["Glukhar","#ff2e63"],["Shturman","#ff2e63"],["Sanitar","#ff2e63"],["Kaban","#ffc233"],
+  ["Zryachiy","#ffc233"],["Partisan","#ffc233"],["Sherpa","#ffc233"],["Legende von Tarkov","#ff7a00"]
+];
+const rankOf = l => RANKS[Math.min(l, RANKS.length) - 1];
+
+/* ============================================================
+   SPEICHER
+   ============================================================ */
+const KEY = "raid_state_v1";
+const Store = {
+  async load(){
+    if(window.storage){ try{ const r = await window.storage.get(KEY); if(r && r.value) return JSON.parse(r.value); }catch(e){} }
+    try{ const v = localStorage.getItem(KEY); if(v) return JSON.parse(v); }catch(e){}
+    return null;
+  },
+  async save(o){
+    const s = JSON.stringify(o);
+    if(window.storage){ try{ await window.storage.set(KEY, s); return; }catch(e){} }
+    try{ localStorage.setItem(KEY, s); }catch(e){}
+  }
+};
+const DEF = () => ({
+  v:1, xp:0, rub:0, active:null, days:{}, hist:[], recent:[], frozen:[],
+  tokens:0, freezes:0, xpBoost:0, rubBoost:0, dbl:0, best:0, skips:0, spent:0, sound:true,
+  cats:Object.fromEntries(Object.keys(CATS).map(k=>[k,true]))
+});
+let S = DEF(), saveT = null;
+const save = () => { clearTimeout(saveT); saveT = setTimeout(()=>Store.save(S), 250); };
+
+/* ---------- Helfer ---------- */
+const $ = s => document.querySelector(s);
+const el = (t,c,h) => { const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e; };
+const key = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const today = () => key(new Date());
+const fmt = n => (n<0?"-":"") + Math.abs(n).toLocaleString("de-DE");
+const MON = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+const REWARD = {1:{xp:45,r:2500},2:{xp:90,r:6000},3:{xp:170,r:14000},4:{xp:300,r:30000},5:{xp:520,r:60000}};
+const need = l => 150 + (l-1)*140;
+const now = () => Date.now();
+function levelInfo(xp){ let l=1, rest=xp; while(rest >= need(l)){ rest -= need(l); l++; } return {lvl:l, into:rest, need:need(l)}; }
+const day = k => S.days[k] || {d:0,s:0,c:{}};
+const doneOn = k => day(k).d > 0 || S.frozen.includes(k);
+const boostXp = () => S.xpBoost > now();
+const boostRub = () => S.rubBoost > now();
+const hexRGB = h => [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)].join(",");
+function topCat(k){
+  const c = day(k).c || {};
+  const e = Object.entries(c).sort((a,b)=>b[1]-a[1])[0];
+  return e ? CATS[e[0]].c : "#ffc233";
+}
+function streakOf(){
+  let d = new Date(), s = 0;
+  if(!doneOn(key(d))){ d.setDate(d.getDate()-1); if(!doneOn(key(d))) return 0; }
+  while(doneOn(key(d))){ s++; d.setDate(d.getDate()-1); }
+  return s;
+}
+function reconcile(){
+  const ks = Object.keys(S.days).filter(k=>S.days[k].d>0).sort();
+  if(!ks.length) return;
+  const yest = new Date(); yest.setDate(yest.getDate()-1);
+  let c = new Date(ks[ks.length-1]+"T12:00:00"); c.setDate(c.getDate()+1);
+  while(key(c) <= key(yest) && S.freezes > 0){
+    if(!doneOn(key(c))){ S.frozen.push(key(c)); S.freezes--; toast("Versicherung ausgezahlt für "+key(c),"good"); }
+    c.setDate(c.getDate()+1);
+  }
+}
+function setAccent(hex){
+  document.documentElement.style.setProperty("--acc", hex);
+  document.documentElement.style.setProperty("--accRGB", hexRGB(hex));
+}
+
+/* ---------- Ton ---------- */
+let AC = null;
+function blip(f=440,d=.07,type="square",g=.03){
+  if(!S.sound) return;
+  try{
+    AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+    const o = AC.createOscillator(), v = AC.createGain();
+    o.type=type; o.frequency.value=f; v.gain.value=g; o.connect(v); v.connect(AC.destination); o.start();
+    v.gain.exponentialRampToValueAtTime(.0001, AC.currentTime+d); o.stop(AC.currentTime+d+.02);
+  }catch(e){}
+}
+const buzz = ms => { try{ navigator.vibrate && navigator.vibrate(ms); }catch(e){} };
+function toast(msg,kind){
+  const t = el("div","tst"+(kind?" "+kind:""),msg); $("#toast").appendChild(t);
+  setTimeout(()=>{ t.style.transition="opacity .4s"; t.style.opacity=0; setTimeout(()=>t.remove(),400); },2600);
+}
+function loot(txt){ const l = el("div","loot",txt); document.body.appendChild(l); setTimeout(()=>l.remove(),1250); }
+
+/* ============================================================
+   HUD
+   ============================================================ */
+function renderHud(){
+  const li = levelInfo(S.xp), rk = rankOf(li.lvl);
+  document.documentElement.style.setProperty("--rc", rk[1]);
+  $("#lvl").textContent = li.lvl;
+  $("#rank").textContent = rk[0].toUpperCase() + (boostXp()||boostRub()||S.dbl ? " ·" : "");
+  $("#ring").style.setProperty("--p", Math.round(li.into/li.need*100));
+  $("#xpfill").style.width = (li.into/li.need*100)+"%";
+  $("#xpnum").textContent = `${fmt(li.into)} / ${fmt(li.need)} XP · ${fmt(S.xp)} gesamt`;
+  $("#rub").textContent = fmt(S.rub);
+  $("#rub2").textContent = fmt(S.rub);
+  $("#rub").style.color = S.rub < 0 ? "var(--danger)" : "";
+  document.querySelectorAll(".stat small")[0].textContent = S.rub < 0 ? "Schulden" : "Rubel";
+  const st = streakOf();
+  $("#stk").textContent = st;
+  if(st > S.best) S.best = st;
+  const t = day(today());
+  $("#dcount").textContent = t.d + " extrahiert";
+  const ds = $("#dstat");
+  if(t.d > 0){ ds.textContent = "Tag gesichert · Serie läuft"; ds.style.color = "var(--ok)"; }
+  else if(st > 0){ ds.textContent = "Serie in Gefahr — heute noch nichts"; ds.style.color = "var(--danger)"; }
+  else { ds.textContent = "Kein Raid heute"; ds.style.color = ""; }
+}
+
+/* ============================================================
+   RAID
+   ============================================================ */
+let rollTimer = null, tickTimer = null;
+const questAt = i => ({i, title:QUESTS[i][0], story:QUESTS[i][1], cat:QUESTS[i][2], diff:QUESTS[i][3], mins:QUESTS[i][4]});
+function rewardFor(q){
+  const b = REWARD[q.diff], m = 1 + Math.min(streakOf(),10)*0.05, d = S.dbl ? 2 : 1;
+  return { xp: Math.round(b.xp*m*(boostXp()?2:1)*d), r: Math.round(b.r*m*(boostRub()?1.5:1)*d) };
+}
+function pool(){
+  const on = Object.keys(CATS).filter(k=>S.cats[k]);
+  let p = QUESTS.map((q,i)=>i).filter(i=>on.includes(QUESTS[i][2]));
+  if(!p.length) p = QUESTS.map((q,i)=>i);
+  const fresh = p.filter(i=>!S.recent.includes(i));
+  return fresh.length ? fresh : p;
+}
+function skipCost(){
+  const s = day(today()).s;
+  if(s === 0) return {free:true, r:0, xp:0};
+  if(S.tokens > 0) return {token:true, r:0, xp:0};
+  return {r: 8000*Math.pow(2,s-1), xp: 30*s};
+}
+function drawQuest(){
+  const p = pool(), pick = p[Math.floor(Math.random()*p.length)];
+  const slot = $("#slot"); slot.innerHTML = "";
+  const card = el("div","qcard rolling");
+  card.style.setProperty("--cc","#ffc233");
+  card.innerHTML = `<div class="qtop"><span class="tag" style="color:var(--dim2)">Board</span><span class="tag" style="color:var(--dim2)">???</span></div>
+    <div class="qtitle">————</div><div class="qstory">Aufträge werden durchsucht…</div>`;
+  slot.appendChild(card);
+  $("#draw").disabled = true;
+  let n = 0; clearInterval(rollTimer);
+  rollTimer = setInterval(()=>{
+    const r = QUESTS[Math.floor(Math.random()*QUESTS.length)], c = CATS[r[2]];
+    card.querySelector(".qtitle").textContent = r[0];
+    card.querySelector(".tag").textContent = c.n;
+    card.style.setProperty("--cc", c.c);
+    setAccent(c.c);
+    blip(240+Math.random()*500,.02,"square",.012);
+    if(++n > 17){
+      clearInterval(rollTimer);
+      S.active = {q:pick, ts:now(), tEnd:null, tRun:false, tLeft:(QUESTS[pick][4]||0)*60};
+      S.recent.push(pick); if(S.recent.length > 16) S.recent.shift();
+      save(); blip(700,.13,"triangle",.05); buzz(30); renderRun();
+    }
+  },55);
+}
+function renderRun(){
+  const slot = $("#slot"), ctr = $("#controls");
+  if(!S.active){
+    setAccent("#ffc233");
+    slot.innerHTML = `<div class="idle"><div class="mark">// RAID</div><p>Auftragsboard bereit. Zieh dir einen Job.</p></div>`;
+    ctr.innerHTML = `<button class="btn" id="draw">Raid starten</button>`;
+    $("#draw").onclick = ()=>{ blip(340,.05); drawQuest(); };
+    return;
+  }
+  const q = questAt(S.active.q), r = rewardFor(q), c = CATS[q.cat], sc = skipCost();
+  setAccent(c.c);
+  slot.innerHTML = "";
+  const card = el("div","qcard");
+  card.style.setProperty("--cc", c.c);
+  card.innerHTML = `
+    <div class="qtop">
+      <span class="tag solid">${c.i} ${c.n}</span>
+      <span class="tag d${q.diff}">${DIFF[q.diff]}</span>
+    </div>
+    <div class="qtitle">${q.title}</div>
+    <div class="qstory">${q.story}</div>
+    <div class="qmeta">
+      <span class="chip">Erfahrung <b>${fmt(r.xp)} XP</b></span>
+      <span class="chip">Beute <b>${fmt(r.r)} ₽</b></span>
+      ${q.mins ? `<span class="chip">Dauer <b>${q.mins} Min</b></span>` : ``}
+      ${S.dbl ? `<span class="chip" style="border-color:var(--cc);color:var(--cc)">Doppelte Beute</span>` : ``}
+      ${boostXp()||boostRub() ? `<span class="chip" style="border-color:var(--cc);color:var(--cc)">Boost aktiv</span>` : ``}
+    </div>`;
+  if(q.mins){
+    const t = el("div","timer");
+    t.style.setProperty("--cc", c.c);
+    t.innerHTML = `<div class="tnum" id="tnum">--:--</div><div class="tbar"><i id="tbar"></i></div>
+      <button class="mini" id="tbtn" style="white-space:nowrap">Start</button>`;
+    card.appendChild(t);
+  }
+  slot.appendChild(card);
+  ctr.innerHTML = `<button class="btn ok" id="done">Extrahiert</button>
+    <div class="btnrow" style="margin-top:8px">
+      <button class="btn ghost ${sc.free||sc.token?"":"warn"}" id="skip">
+        ${sc.free ? "Auftrag abstoßen · gratis" : sc.token ? "Auftrag abstoßen · Token" : `Abstoßen · ${fmt(sc.r)} ₽ / ${sc.xp} XP`}
+      </button>
+    </div>`;
+  $("#done").onclick = completeQuest;
+  $("#skip").onclick = skipQuest;
+  if(q.mins) setupTimer(q);
+}
+function setupTimer(q){
+  const btn = $("#tbtn"); if(!btn) return;
+  const draw = ()=>{
+    const a = S.active; if(!a) return;
+    const left = a.tRun ? Math.max(0, Math.round((a.tEnd-now())/1000)) : a.tLeft;
+    const num = $("#tnum"); if(!num) return;
+    num.textContent = String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0");
+    $("#tbar").style.width = (100 - left/(q.mins*60)*100)+"%";
+    if(a.tRun && left <= 0){
+      a.tRun = false; a.tLeft = 0; save(); btn.textContent = "Fertig"; btn.disabled = true;
+      blip(880,.2,"triangle",.06); setTimeout(()=>blip(1200,.26,"triangle",.06),220);
+      buzz([80,60,80]); toast("Zeit rum. Extrahieren.","good");
+    }
+  };
+  btn.textContent = S.active.tRun ? "Pause" : (S.active.tLeft < q.mins*60 ? "Weiter" : "Start");
+  btn.onclick = ()=>{
+    const a = S.active;
+    if(a.tRun){ a.tLeft = Math.max(0, Math.round((a.tEnd-now())/1000)); a.tRun = false; btn.textContent = "Weiter"; }
+    else { a.tEnd = now()+a.tLeft*1000; a.tRun = true; btn.textContent = "Pause"; }
+    blip(420,.05); save(); draw();
+  };
+  clearInterval(tickTimer); tickTimer = setInterval(draw,1000); draw();
+}
+function completeQuest(){
+  const q = questAt(S.active.q), r = rewardFor(q), k = today(), d = day(k);
+  const c = Object.assign({}, d.c); c[q.cat] = (c[q.cat]||0)+1;
+  S.days[k] = {d:d.d+1, s:d.s, c};
+  S.hist.unshift({i:q.i, t:q.title, c:q.cat, df:q.diff, xp:r.xp, r:r.r, k, ts:now()});
+  if(S.hist.length > 400) S.hist.pop();
+  const before = levelInfo(S.xp).lvl;
+  S.xp += r.xp; S.rub += r.r; S.active = null; S.dbl = 0;
+  clearInterval(tickTimer);
+  const after = levelInfo(S.xp).lvl;
+  save();
+  loot(`+${fmt(r.xp)} XP · +${fmt(r.r)} ₽`);
+  blip(540,.09,"triangle",.05); setTimeout(()=>blip(810,.15,"triangle",.05),90); buzz([25,40,25]);
+  if(d.d === 0){ const st = streakOf(); toast(`Tag gesichert. Serie: ${st} ${st===1?"Tag":"Tage"}.`,"good"); }
+  renderAll();
+  if(after > before) levelUp(after);
+}
+function levelUp(l){
+  const rk = rankOf(l);
+  document.documentElement.style.setProperty("--rc", rk[1]);
+  setAccent(rk[1]);
+  $("#flashBig").textContent = "LV " + l;
+  $("#flashSub").textContent = rk[0].toUpperCase();
+  $("#flash").classList.add("on");
+  blip(660,.12,"sawtooth",.05); setTimeout(()=>blip(990,.32,"sawtooth",.05),140);
+  buzz([40,60,40,60,90]);
+}
+function skipQuest(){
+  const c = skipCost();
+  if(c.free) toast("Gratis-Abstoß für heute verbraucht.");
+  else if(c.token){ S.tokens--; toast("Token eingesetzt. Rest: "+S.tokens); }
+  else{
+    const debt = S.rub < c.r;
+    S.rub -= c.r;
+    const floorXp = S.xp - levelInfo(S.xp).into;
+    S.xp = Math.max(floorXp, S.xp - c.xp);
+    toast(debt ? `Auf Pump abgestoßen. Schulden: ${fmt(S.rub)} ₽` : `Abgestoßen: −${fmt(c.r)} ₽, −${c.xp} XP`, "bad");
+  }
+  const k = today(), d = day(k);
+  S.days[k] = {d:d.d, s:d.s+1, c:d.c||{}};
+  S.skips++; S.active = null; clearInterval(tickTimer);
+  blip(200,.13,"square",.04); buzz(50); save(); renderAll();
+}
+
+/* ============================================================
+   EINSATZFELDER
+   ============================================================ */
+function renderCats(){
+  const box = $("#cats"); box.innerHTML = "";
+  Object.entries(CATS).forEach(([k,c])=>{
+    const b = el("button","mini"+(S.cats[k]?" on":""), `${c.i} ${c.n}`);
+    b.style.setProperty("--cc", c.c);
+    b.onclick = ()=>{
+      S.cats[k] = !S.cats[k];
+      if(!Object.values(S.cats).some(Boolean)){ S.cats[k] = true; toast("Mindestens ein Feld muss aktiv bleiben.","bad"); }
+      blip(320,.04); save(); renderCats();
+    };
+    box.appendChild(b);
+  });
+  $("#fcount").textContent = QUESTS.filter(q=>S.cats[q[2]]).length + " von " + QUESTS.length + " Karten";
+}
+
+/* ============================================================
+   LOG
+   ============================================================ */
+let calM = new Date().getMonth(), calY = new Date().getFullYear(), selDay = today();
+function renderCal(){
+  $("#monthLbl").textContent = MON[calM] + " " + calY;
+  const g = $("#cal"); g.innerHTML = "";
+  ["Mo","Di","Mi","Do","Fr","Sa","So"].forEach(d=>g.appendChild(el("div","dow",d)));
+  const off = (new Date(calY,calM,1).getDay()+6)%7;
+  for(let i=0;i<off;i++) g.appendChild(el("div","day empty"));
+  const last = new Date(calY,calM+1,0).getDate();
+  for(let d=1; d<=last; d++){
+    const k = key(new Date(calY,calM,d)), info = day(k);
+    let cls = "day";
+    if(info.d > 0) cls += " done";
+    else if(S.frozen.includes(k)) cls += " frozen";
+    if(k === today()) cls += " today";
+    if(k === selDay) cls += " sel";
+    const c = el("div", cls, d + (info.d>1 ? `<em>${info.d}</em>` : ""));
+    if(info.d > 0){
+      const col = topCat(k), a = info.d >= 3 ? "" : info.d === 2 ? "e0" : "b8";
+      c.style.background = col + a;
+      c.style.boxShadow = "0 0 14px -3px "+col;
+    }
+    c.onclick = ()=>{ selDay = k; blip(380,.03); renderCal(); renderDay(); };
+    g.appendChild(c);
+  }
+  const st = streakOf();
+  $("#sk1").textContent = st; $("#sk2").textContent = Math.max(S.best, st);
+  $("#freezeInfo").textContent = S.freezes + " Versicherung";
+}
+function renderDay(){
+  const list = S.hist.filter(h=>h.k===selDay), d = day(selDay);
+  $("#dayLbl").textContent = selDay === today() ? "Heute" : selDay.split("-").reverse().join(".");
+  $("#dayXp").textContent = fmt(list.reduce((a,b)=>a+b.xp,0)) + " XP" + (d.s ? ` · ${d.s} abgestoßen` : "");
+  const box = $("#dayList"); box.innerHTML = "";
+  if(!list.length){
+    box.appendChild(el("div","empty-note", S.frozen.includes(selDay) ? "Tag durch Versicherung gerettet." : "Kein Raid an diesem Tag."));
+    return;
+  }
+  list.forEach(h=>{
+    const c = CATS[h.c], r = el("div","row");
+    r.innerHTML = `<div style="color:${c.c};width:16px;text-align:center">${c.i}</div>
+      <div class="g"><div class="t">${h.t}</div><div class="s" style="color:${c.c}">${c.n} · ${DIFF[h.df]}</div></div>
+      <div class="v" style="color:${c.c}">+${fmt(h.xp)} XP<br><span style="color:var(--dim2)">+${fmt(h.r)} ₽</span></div>`;
+    box.appendChild(r);
+  });
+}
+
+/* ============================================================
+   HÄNDLER
+   ============================================================ */
+const SHOP = [
+  {ic:"⤫", n:"Auftrag abstoßen", d:"Ein Token wirft einen Auftrag weg, ohne dass es Rubel oder XP kostet.", p:12000,
+   buy:()=>S.tokens++, own:()=>S.tokens+" Stück"},
+  {ic:"✚", n:"Versicherung", d:"Rettet automatisch einen Tag, an dem du gar nichts geschafft hast. Die Serie läuft weiter.", p:45000,
+   buy:()=>S.freezes++, own:()=>S.freezes+" Stück"},
+  {ic:"◈", n:"Doppelte Beute", d:"Der nächste extrahierte Raid bringt doppelte XP und doppelte Rubel.", p:25000,
+   buy:()=>S.dbl=1, own:()=>S.dbl?"scharf":"—"},
+  {ic:"⇈", n:"Kampferfahrung · 24 h", d:"Doppelte XP auf jeden Raid, einen Tag lang.", p:60000,
+   buy:()=>S.xpBoost=Math.max(now(),S.xpBoost)+864e5, live:()=>S.xpBoost},
+  {ic:"₽", n:"Bessere Preise · 24 h", d:"Anderthalbfache Rubel auf jeden Raid, einen Tag lang.", p:38000,
+   buy:()=>S.rubBoost=Math.max(now(),S.rubBoost)+864e5, live:()=>S.rubBoost}
+];
+function renderShop(){
+  const box = $("#shopList"); box.innerHTML = "";
+  SHOP.forEach(it=>{
+    const active = it.live && it.live() > now();
+    const info = it.own ? it.own() : (active ? Math.ceil((it.live()-now())/36e5)+" h aktiv" : "nicht aktiv");
+    const r = el("div","item");
+    r.innerHTML = `<div class="ic">${it.ic}</div><div class="g"><div class="n">${it.n}</div>
+      <div class="d">${it.d}</div><div class="d" style="color:var(--acc)">${info}</div></div>`;
+    const b = el("button","mini", fmt(it.p)+" ₽");
+    if(S.rub < it.p) b.style.opacity = .4;
+    b.onclick = ()=>{
+      if(S.rub < it.p){ toast("Zu wenig Rubel.","bad"); blip(150,.16,"square",.04); return; }
+      S.rub -= it.p; S.spent += it.p; it.buy();
+      blip(740,.1,"triangle",.05); buzz(30); toast(it.n+" gekauft.","good"); save(); renderAll();
+    };
+    r.appendChild(b); box.appendChild(r);
+  });
+  const lad = $("#ladder"); lad.innerHTML = "";
+  const cur = levelInfo(S.xp).lvl;
+  RANKS.forEach((rk,i)=>{
+    const l = i+1, on = (l === Math.min(cur,RANKS.length));
+    const r = el("div","row");
+    r.style.opacity = l <= cur ? 1 : .45;
+    r.innerHTML = `<div style="width:26px;font-size:11px;color:var(--dim2)">${l===RANKS.length?l+"+":l}</div>
+      <div class="g"><div class="t" style="color:${rk[1]};font-family:var(--f-head);font-size:15px;letter-spacing:.08em;text-transform:uppercase">${rk[0]}</div></div>
+      <div class="v" style="color:${rk[1]}">${on ? "◀ hier" : l < cur ? "erledigt" : ""}</div>`;
+    lad.appendChild(r);
+  });
+}
+
+/* ============================================================
+   AKTE
+   ============================================================ */
+function renderMe(){
+  const li = levelInfo(S.xp), rk = rankOf(li.lvl);
+  $("#meRank").textContent = rk[0].toUpperCase();
+  $("#meRank").style.color = rk[1];
+  const earned = S.hist.reduce((a,b)=>a+b.r,0);
+  const byCat = {}; S.hist.forEach(h=>byCat[h.c]=(byCat[h.c]||0)+1);
+  const top = Object.entries(byCat).sort((a,b)=>b[1]-a[1])[0];
+  const hard = S.hist.filter(h=>h.df>=4).length;
+  const rows = [
+    ["Raids extrahiert", fmt(S.hist.length)],
+    ["Davon Brutal / Insane", fmt(hard)],
+    ["Level · XP", li.lvl+" · "+fmt(S.xp)],
+    ["Serie aktuell", streakOf()+" Tage"],
+    ["Serienrekord", Math.max(S.best,streakOf())+" Tage"],
+    ["Rubel erbeutet", fmt(earned)+" ₽"],
+    ["Beim Händler gelassen", fmt(S.spent)+" ₽"],
+    ["Aufträge abgestoßen", fmt(S.skips)],
+    ["Stärkstes Feld", top ? CATS[top[0]].n+" ("+top[1]+")" : "—"]
+  ];
+  const box = $("#meStats"); box.innerHTML = "";
+  rows.forEach(([a,b])=>{
+    const r = el("div","row");
+    r.innerHTML = `<div class="g"><div class="t" style="color:var(--dim)">${a}</div></div><div class="v" style="color:var(--txt)">${b}</div>`;
+    box.appendChild(r);
+  });
+  const bars = $("#bars"); bars.innerHTML = "";
+  const days = [];
+  for(let i=13;i>=0;i--){ const d = new Date(); d.setDate(d.getDate()-i); days.push(key(d)); }
+  const max = Math.max(1, ...days.map(k=>day(k).d));
+  days.forEach(k=>{
+    const n = day(k).d, b = el("div");
+    b.style.height = (n ? 8 + n/max*58 : 3)+"px";
+    b.style.background = n ? topCat(k) : "#1c1830";
+    if(n) b.style.boxShadow = "0 0 12px -2px "+topCat(k);
+    bars.appendChild(b);
+  });
+  const dist = $("#dist"); dist.innerHTML = "";
+  const mx = Math.max(1, ...Object.values(byCat));
+  Object.entries(CATS).forEach(([k,c])=>{
+    const n = byCat[k]||0, w = el("div");
+    w.innerHTML = `<div class="l"><span style="color:${c.c}">${c.i} ${c.n}</span><span>${n}</span></div>
+      <div class="b"><i style="width:${n/mx*100}%;background:${c.c};box-shadow:0 0 10px ${c.c}"></i></div>`;
+    dist.appendChild(w);
+  });
+  const h = $("#hist"); h.innerHTML = "";
+  $("#histCount").textContent = S.hist.length + " Einträge";
+  if(!S.hist.length) h.appendChild(el("div","empty-note","Noch kein Raid im Protokoll."));
+  S.hist.slice(0,25).forEach(x=>{
+    const c = CATS[x.c], r = el("div","row");
+    r.innerHTML = `<div style="color:${c.c};width:16px;text-align:center">${c.i}</div>
+      <div class="g"><div class="t">${x.t}</div><div class="s">${x.k.split("-").reverse().join(".")} · ${DIFF[x.df]}</div></div>
+      <div class="v" style="color:${c.c}">+${fmt(x.xp)}</div>`;
+    h.appendChild(r);
+  });
+  $("#sndBtn").classList.toggle("on", !!S.sound);
+  $("#sndBtn").textContent = S.sound ? "Sound an" : "Sound aus";
+}
+
+/* ============================================================
+   RENDER + NAVIGATION
+   ============================================================ */
+function renderAll(){ renderHud(); renderRun(); renderCats(); renderCal(); renderDay(); renderShop(); renderMe(); }
+document.querySelectorAll("#nav button").forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll("#nav button").forEach(x=>x.classList.remove("on"));
+    document.querySelectorAll(".screen").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on"); $("#"+b.dataset.s).classList.add("on");
+    blip(440,.04); window.scrollTo(0,0);
+  };
+});
+$("#prevM").onclick = ()=>{ if(--calM<0){calM=11;calY--;} blip(300,.03); renderCal(); };
+$("#nextM").onclick = ()=>{ if(++calM>11){calM=0;calY++;} blip(300,.03); renderCal(); };
+$("#flashOk").onclick = ()=>{ $("#flash").classList.remove("on"); renderRun(); };
+$("#expBtn").onclick = ()=>{ $("#io").value = JSON.stringify(S); $("#io").select(); toast("Sicherung erstellt. Text kopieren.","good"); };
+$("#impBtn").onclick = ()=>{
+  try{
+    const o = JSON.parse($("#io").value);
+    if(!o || typeof o !== "object") throw 0;
+    S = Object.assign(DEF(), o); save(); renderAll(); toast("Sicherung eingespielt.","good");
+  }catch(e){ toast("Text ist keine gültige Sicherung.","bad"); }
+};
+$("#sndBtn").onclick = ()=>{ S.sound = !S.sound; blip(520,.06); save(); renderMe(); };
+$("#resetBtn").onclick = ()=>{
+  const b = $("#resetBtn");
+  if(b.dataset.armed){ S = DEF(); save(); renderAll(); toast("Alles zurückgesetzt."); b.dataset.armed=""; b.textContent="Alles löschen"; }
+  else { b.dataset.armed="1"; b.textContent="Wirklich? Nochmal drücken";
+    setTimeout(()=>{ b.dataset.armed=""; b.textContent="Alles löschen"; },4000); }
+};
+
+/* ============================================================
+   START
+   ============================================================ */
+(async function init(){
+  const loaded = await Store.load();
+  if(loaded) S = Object.assign(DEF(), loaded, {cats:Object.assign(DEF().cats, loaded.cats||{})});
+  reconcile();
+  selDay = today();
+  renderAll();
+  if(S.active && QUESTS[S.active.q] && QUESTS[S.active.q][4]) setupTimer(questAt(S.active.q));
+  save();
+})();
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) renderHud(); });
+</script>
+</body>
+</html>

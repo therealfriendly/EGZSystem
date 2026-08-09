@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Operator">
+  <title>Operator</title>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="44%" r="74%">
+      <stop offset="0" stop-color="#17133a"/>
+      <stop offset="1" stop-color="#070610"/>
+    </radialGradient>
+    <filter id="glow" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="13" result="b"/>
+      <feComponentTransfer in="b" result="g">
+        <feFuncA type="linear" slope="0.55"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="g"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <g filter="url(#glow)" fill="none" stroke="#00ffa3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="256" cy="256" r="181.8" stroke-width="26.6"/>
+    <path d="M174.1 261.1 L230.4 317.4 L343 199.7" stroke-width="37.9"/>
+  </g>
+</svg>
