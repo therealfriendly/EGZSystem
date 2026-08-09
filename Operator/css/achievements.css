@@ -1,0 +1,38 @@
+/* ============================================================
+   ERFOLGE — eine Spur pro Checklisten-Punkt plus alle Karten
+   Gerendert von js/ui/achievements.js
+   ============================================================ */
+
+.ach{border:1px solid var(--line);border-radius:3px;padding:11px;margin-bottom:10px;
+  background:linear-gradient(158deg,rgba(255,255,255,.03),transparent 70%)}
+.ach:last-child{margin-bottom:0}
+
+.achhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.achname{font-family:var(--f-head);font-size:19px;letter-spacing:.06em;text-transform:uppercase}
+.achnum{font-family:var(--f-head);font-size:19px;color:var(--acc)}
+.achnum span{font-family:var(--f-mono);font-size:9px;color:var(--dim2);letter-spacing:.1em;margin-left:3px}
+
+.achbar{height:4px;background:#16122a;border-radius:2px;overflow:hidden;margin:8px 0 5px}
+.achbar i{display:block;height:100%;transition:width .6s cubic-bezier(.2,.9,.2,1)}
+.achnext{font-size:10px;color:var(--dim2);letter-spacing:.07em;margin-bottom:9px}
+
+.tiers{display:flex;flex-direction:column;gap:5px}
+.tier{display:flex;align-items:center;gap:9px;padding:6px 8px;border:1px solid var(--line);
+  border-radius:2px;opacity:.4;transition:.3s}
+.tier.got{opacity:1;border-color:var(--tcol);background:rgba(255,255,255,.03)}
+.tier.got.rainbow{
+  border-color:transparent;
+  background:linear-gradient(90deg,rgba(255,46,99,.16),rgba(255,194,51,.16),rgba(0,255,163,.16),rgba(0,229,255,.16),rgba(168,107,255,.16))}
+
+.tdot{width:22px;height:22px;flex:0 0 22px;display:grid;place-items:center;border-radius:50%;
+  border:1px solid var(--tcol);color:var(--tcol);font-size:11px}
+.tier.got .tdot{background:var(--tcol);color:#0a0814;box-shadow:0 0 14px -3px var(--tcol)}
+.tier.got.rainbow .tdot{background:linear-gradient(135deg,#ff2e63,#ffc233,#00ffa3,#00e5ff,#a86bff);border-color:transparent;color:#0a0814}
+
+.tinfo{flex:1;min-width:0;display:flex;flex-direction:column}
+.tinfo b{font-family:var(--f-head);font-size:13px;letter-spacing:.09em;color:var(--tcol);font-weight:400}
+.tier.got.rainbow .tinfo b{
+  background:linear-gradient(90deg,#ff2e63,#ffc233,#00ffa3,#00e5ff,#a86bff);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.tinfo span{font-size:10px;color:var(--dim2);line-height:1.3}
+.tinfo em{font-style:normal;font-size:9px;color:var(--dim2);letter-spacing:.12em;margin-top:1px;opacity:.7}

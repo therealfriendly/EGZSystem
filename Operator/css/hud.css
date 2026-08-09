@@ -1,0 +1,80 @@
+/* ============================================================
+   HUD — Kopfzeile mit Level, XP, Münzen, Serie und der Pflicht
+   Zwei Reihen: oben der Status, darunter die Checkliste über die
+   volle Breite. Die Kacheln sind absichtlich groß — sie sind das,
+   was man in dieser App am häufigsten antippt.
+   Gerendert von js/ui/hud.js
+   ============================================================ */
+
+#hud{position:fixed;top:0;left:0;right:0;z-index:80;padding-top:env(safe-area-inset-top);
+  background:linear-gradient(180deg,rgba(7,6,16,.985) 78%,rgba(7,6,16,.92));
+  border-bottom:1px solid var(--line)}
+#hud::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,var(--schritte),var(--training),var(--lernen),var(--hack));
+  opacity:.7;transition:opacity .4s,box-shadow .4s}
+/* Pflicht erledigt: die Kante wird grün — auf jedem Tab sichtbar */
+#hud.ready::after{background:var(--ok);opacity:1;box-shadow:0 0 16px var(--ok)}
+
+.hudrow{display:flex;align-items:flex-start;gap:10px;padding:7px 13px 9px;max-width:640px;margin:0 auto}
+
+/* ---------- Level-Ring ---------- */
+.ring{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;position:relative;
+  background:conic-gradient(var(--rc,#00ffa3) calc(var(--p,0)*1%),rgba(255,255,255,.06) 0);
+  transition:background .5s ease;margin-top:2px}
+.ring::before{content:"";position:absolute;inset:3px;border-radius:50%;background:#0a0814;border:1px solid var(--line)}
+.ring span{position:relative;font-family:var(--f-head);font-size:17px;line-height:1;color:var(--rc,#00ffa3)}
+
+/* ---------- Rang und XP ---------- */
+.hudmid{flex:1;min-width:0;padding-top:3px}
+.rank{font-family:var(--f-head);font-size:15px;letter-spacing:.1em;color:var(--rc,#00ffa3);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.xpbar{height:5px;background:#16122a;border:1px solid var(--line);margin-top:4px;overflow:hidden}
+.xpbar i{display:block;height:100%;width:0;transition:width .7s cubic-bezier(.2,.9,.2,1);
+  background:linear-gradient(90deg,var(--hack),var(--schritte) 40%,var(--coin) 70%,var(--training));
+  box-shadow:0 0 12px rgba(255,255,255,.25)}
+.xpnum{font-size:9px;color:var(--dim2);letter-spacing:.06em;margin-top:3px;white-space:nowrap}
+.xpnum .coins{color:var(--coin);margin-left:7px}
+
+/* ---------- Serie ---------- */
+.streak{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;padding-top:1px}
+.streak b{font-family:var(--f-head);font-size:26px;line-height:1;color:var(--dim2);transition:color .35s}
+.streak b.hot{color:var(--coin);text-shadow:0 0 16px var(--coin)}
+.streak span{font-size:8px;letter-spacing:.22em;color:var(--dim2);text-transform:uppercase;margin-top:3px}
+
+/* ============================================================
+   CHECKLISTE — zweite Reihe, volle Breite
+   Kacheln stapeln Kästchen über Beschriftung, damit der Name
+   die ganze Kachelbreite bekommt und nicht abgeschnitten wird.
+   ============================================================ */
+.chkrow{display:flex;align-items:stretch;gap:7px;padding:0 13px 10px;max-width:640px;margin:0 auto}
+#checks{flex:1;min-width:0;display:flex;gap:7px}
+
+.chk{flex:1;min-width:0;height:54px;padding:0 6px;cursor:pointer;border-radius:4px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  border:1px solid var(--line2);background:rgba(255,255,255,.035);color:var(--dim);
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.04em;
+  transition:border-color .25s,background .25s,color .25s,box-shadow .25s,transform .1s}
+.chk:active{transform:scale(.96)}
+.chk i{width:20px;height:20px;flex:0 0 20px;border:1.5px solid var(--line2);border-radius:4px;
+  display:grid;place-items:center;font-style:normal;font-size:12px;line-height:1;
+  transition:background .25s,border-color .25s,color .25s,transform .25s}
+.chk span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.chk.on{border-color:var(--ok);color:var(--ok);background:rgba(0,255,163,.09);
+  box-shadow:0 0 18px -7px var(--ok)}
+.chk.on i{background:var(--ok);border-color:var(--ok);color:#06301f;transform:scale(1.1)}
+.chk.on i::before{content:"✓"}
+
+/* Leere Checkliste: eine gestrichelte Kachel, die den Editor öffnet */
+.chk.add{border-style:dashed}
+.chk.add i::before{content:"+"}
+
+.pen{flex:0 0 42px;display:grid;place-items:center;cursor:pointer;border-radius:4px;
+  border:1px solid var(--line2);background:rgba(255,255,255,.035);color:var(--dim);
+  font-size:15px;line-height:1;transition:background .2s,color .2s,transform .1s}
+.pen:active{background:rgba(255,255,255,.09);color:var(--txt);transform:scale(.96)}
+
+@media (max-width:339px){
+  .chk{font-size:9.5px}
+  .pen{flex:0 0 36px}
+}

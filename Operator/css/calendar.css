@@ -1,0 +1,33 @@
+/* ============================================================
+   CALENDAR — Monatsraster im Log
+   Grün  = Checkliste an dem Tag erledigt (zählt für die Serie)
+   Blau  = Joker hat den Tag gerettet
+   Grau umrandet = nur Karten gezogen, Pflicht blieb offen
+   Gerendert von js/ui/log.js
+   ============================================================ */
+
+.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.calhead b{font-family:var(--f-head);font-size:18px;letter-spacing:.09em}
+
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .dow{font-size:9px;color:var(--dim2);text-align:center;letter-spacing:.1em;padding-bottom:2px}
+
+.day{aspect-ratio:1;border:1px solid var(--line);background:rgba(255,255,255,.02);display:grid;place-items:center;
+  font-size:11px;color:var(--dim2);position:relative;cursor:pointer;border-radius:2px;transition:.2s}
+.day.empty{border-color:transparent;background:none;cursor:default}
+
+.day.done{background:var(--ok);border-color:transparent;color:#06301f;font-weight:700;
+  box-shadow:0 0 14px -3px var(--ok)}
+.day.joker{border-color:var(--hack);background:rgba(0,229,255,.16);color:var(--hack)}
+.day.partial{border-color:var(--line2);color:var(--dim)}
+
+.day.today{outline:1px solid var(--txt);outline-offset:1px}
+.day.sel{outline:2px solid var(--acc);outline-offset:1px}
+.day em{position:absolute;bottom:1px;right:3px;font-style:normal;font-size:8px;opacity:.8}
+
+/* ---------- Tagesdetail ---------- */
+.daystate{font-size:11px;letter-spacing:.08em;padding:8px 10px;border-radius:2px;margin-bottom:8px;
+  border:1px solid var(--line)}
+.daystate.ok{border-color:var(--ok);color:var(--ok);background:rgba(0,255,163,.07)}
+.daystate.joker{border-color:var(--hack);color:var(--hack);background:rgba(0,229,255,.07)}
+.daystate.off{color:var(--dim2)}

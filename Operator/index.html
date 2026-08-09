@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#070610">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Operator">
+<title>Operator</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23070610'/%3E%3Ccircle cx='90' cy='90' r='62' fill='none' stroke='%2300ffa3' stroke-width='7'/%3E%3Cpath d='M62 90 L82 110 L120 70' fill='none' stroke='%2300ffa3' stroke-width='11' stroke-linecap='square'/%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIk9wZXJhdG9yIiwgInNob3J0X25hbWUiOiAiT3BlcmF0b3IiLCAiZGVzY3JpcHRpb24iOiAiSGFiaXQgVHJhY2tlciBtaXQgUGZsaWNodC1DaGVja2xpc3RlIHVuZCB6dWZhZWxsaWdlbiBUcmFpbmluZ3NrYXJ0ZW4uIiwgInN0YXJ0X3VybCI6ICIuLyIsICJzY29wZSI6ICIuLyIsICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLCAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDcwNjEwIiwgInRoZW1lX2NvbG9yIjogIiMwNzA2MTAiLCAiaWNvbnMiOiBbeyJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJyUzRSUzQ3JlY3Qgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInIGZpbGw9JyUyMzA3MDYxMCcvJTNFJTNDY2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzE3NicgZmlsbD0nbm9uZScgc3Ryb2tlPSclMjMwMGZmYTMnIHN0cm9rZS13aWR0aD0nMjAnLyUzRSUzQ3BhdGggZD0nTTE3NiAyNTYgTDIzMyAzMTMgTDM0MiAxOTgnIGZpbGw9J25vbmUnIHN0cm9rZT0nJTIzMDBmZmEzJyBzdHJva2Utd2lkdGg9JzMyJyBzdHJva2UtbGluZWNhcD0nc3F1YXJlJy8lM0UlM0Mvc3ZnJTNFIiwgInNpemVzIjogImFueSIsICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLCAicHVycG9zZSI6ICJhbnkifV19">
+
+<!-- Reihenfolge zählt: base zuerst (Tokens), overlays zuletzt -->
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/hud.css">
+<link rel="stylesheet" href="css/draw.css">
+<link rel="stylesheet" href="css/calendar.css">
+<link rel="stylesheet" href="css/achievements.css">
+<link rel="stylesheet" href="css/nav.css">
+<link rel="stylesheet" href="css/overlays.css">
+</head>
+<body>
+<div id="grain"></div><div id="vig"></div>
+
+<!-- ==================== HUD + CHECKLISTE ==================== -->
+<header id="hud">
+  <div class="hudrow">
+    <div class="ring" id="ring"><span id="lvl">1</span></div>
+    <div class="hudmid">
+      <div class="rank" id="rank">NIEMAND</div>
+      <div class="xpbar"><i id="xpfill"></i></div>
+      <div class="xpnum" id="xpnum"></div>
+    </div>
+    <div class="streak"><b id="streakBadge">0</b><span>Serie</span></div>
+  </div>
+  <div class="chkrow">
+    <div id="checks"></div>
+    <button class="pen" id="editChecks" title="Checkliste bearbeiten">✎</button>
+  </div>
+</header>
+
+<!-- ==================== SCREEN: HEUTE ==================== -->
+<section class="screen on" id="s-run">
+  <div class="wrap">
+    <div class="panel">
+      <div class="eyebrow"><span id="dstat">Checkliste offen</span><b id="dcount">0 Karten</b></div>
+      <div id="cardArea"></div>
+      <div id="controls"></div>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow"><span>Felder im Stapel</span><b id="fcount"></b></div>
+      <div id="cats" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN: LOG ==================== -->
+<section class="screen" id="s-log">
+  <div class="wrap">
+    <div class="panel">
+      <div class="calhead">
+        <button class="mini" id="prevM">◀</button><b id="monthLbl">—</b><button class="mini" id="nextM">▶</button>
+      </div>
+      <div class="cal" id="cal"></div>
+      <div class="eyebrow" style="margin:12px 0 0">
+        <span>Serie <b id="sk1">0</b> Tage · Rekord <b id="sk2">0</b></span><b id="jokerInfo">0 Joker</b>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow"><span id="dayLbl">Heute</span><b id="dayXp"></b></div>
+      <div id="dayList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN: SHOP ==================== -->
+<section class="screen" id="s-shop">
+  <div class="wrap">
+    <div class="panel">
+      <div class="eyebrow"><span>Shop</span><b><span id="coins2">0</span> ◎</b></div>
+      <div id="shopList"></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow"><span>Rangleiter</span></div>
+      <div id="ladder"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN: ERFOLGE ==================== -->
+<section class="screen" id="s-ach">
+  <div class="wrap">
+    <div class="panel">
+      <div class="eyebrow"><span>Erfolge</span><b id="achCount"></b></div>
+      <div id="achList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN: KARTEN ==================== -->
+<section class="screen" id="s-cards">
+  <div class="wrap">
+    <div class="panel">
+      <div class="eyebrow"><span>Kartenstapel</span><b id="deckCount"></b></div>
+      <button class="btn" id="newCard">+ Neue Karte</button>
+      <div id="cardFilter" style="display:flex;flex-wrap:wrap;gap:6px;margin:11px 0"></div>
+      <div id="cardList"></div>
+      <button class="mini wide" id="restoreDeck">Standard wiederherstellen</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN: PROFIL ==================== -->
+<section class="screen" id="s-me">
+  <div class="wrap">
+    <div class="panel">
+      <div class="eyebrow"><span>Profil</span><b id="meRank">—</b></div>
+      <div id="meStats"></div>
+    </div>
+    <div class="panel"><div class="eyebrow"><span>Letzte 14 Tage</span></div><div class="bars" id="bars"></div></div>
+    <div class="panel"><div class="eyebrow"><span>Verteilung</span></div><div class="dist" id="dist"></div></div>
+    <div class="panel"><div class="eyebrow"><span>Protokoll</span><b id="histCount"></b></div><div id="hist"></div></div>
+    <div class="panel">
+      <div class="eyebrow"><span>Daten</span></div>
+      <div class="btnrow" style="margin-bottom:8px">
+        <button class="mini" id="expBtn">Export</button>
+        <button class="mini" id="impBtn">Import</button>
+        <button class="mini" id="sndBtn">Sound</button>
+      </div>
+      <textarea id="io" placeholder="Sicherung: Export drücken, Text kopieren. Zum Zurückspielen Text einfügen und Import drücken."></textarea>
+      <button class="mini wide danger" id="resetBtn">Alles löschen</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== OVERLAYS ==================== -->
+<div id="toast"></div>
+<div id="modal"></div>
+<div id="flash"><div>
+  <div class="lvl">Aufstieg</div>
+  <div class="big" id="flashBig">2</div>
+  <div class="sub" id="flashSub">—</div>
+  <button class="mini" style="margin-top:20px;padding:11px 24px" id="flashOk">Weiter</button>
+</div></div>
+
+<!-- ==================== NAV ==================== -->
+<nav id="nav">
+  <button data-s="s-run"   class="on" style="--tc:#00ffa3"><i>◈</i>Heute</button>
+  <button data-s="s-log"   style="--tc:#00e5ff"><i>▦</i>Log</button>
+  <button data-s="s-shop"  style="--tc:#ffc233"><i>◎</i>Shop</button>
+  <button data-s="s-ach"   style="--tc:#ff8a3d"><i>★</i>Erfolge</button>
+  <button data-s="s-cards" style="--tc:#a86bff"><i>⬡</i>Karten</button>
+  <button data-s="s-me"    style="--tc:#ff2e63"><i>◉</i>Profil</button>
+</nav>
+
+<!-- ============================================================
+     SKRIPTE — klassische Scripts, kein Build-Schritt.
+     Die Reihenfolge ist die Abhängigkeitskette:
+     Konfiguration -> Daten -> Helfer -> Zustand -> UI -> App
+     ============================================================ -->
+<script src="js/config.js"></script>
+<script src="js/data/deck.js"></script>
+<script src="js/data/shop.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui/hud.js"></script>
+<script src="js/ui/roll.js"></script>
+<script src="js/ui/run.js"></script>
+<script src="js/ui/log.js"></script>
+<script src="js/ui/shop.js"></script>
+<script src="js/ui/achievements.js"></script>
+<script src="js/ui/cards.js"></script>
+<script src="js/ui/profile.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

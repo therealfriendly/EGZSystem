@@ -1,0 +1,14 @@
+/* ============================================================
+   NAV — feste Tab-Leiste unten, sechs Tabs
+   Umschaltung in js/app.js, --tc = Farbe des jeweiligen Tabs
+   ============================================================ */
+
+#nav{position:fixed;bottom:0;left:0;right:0;z-index:80;display:flex;padding-bottom:env(safe-area-inset-bottom);
+  background:rgba(7,6,16,.97);border-top:1px solid var(--line);backdrop-filter:blur(10px)}
+#nav button{flex:1;min-width:0;background:none;border:0;color:var(--dim2);padding:8px 1px 10px;cursor:pointer;
+  font-family:var(--f-head);font-size:10px;letter-spacing:.08em;text-transform:uppercase;position:relative;
+  transition:color .2s;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#nav button i{display:block;font-style:normal;font-size:16px;margin-bottom:2px}
+#nav button.on{color:var(--tc)}
+#nav button.on::before{content:"";position:absolute;top:0;left:14%;right:14%;height:2px;background:var(--tc);
+  box-shadow:0 0 14px var(--tc)}

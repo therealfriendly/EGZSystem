@@ -1,0 +1,79 @@
+/* ============================================================
+   COMPONENTS — wiederverwendbare Bausteine, screenunabhaengig
+   Panel, Buttons, Chips, Listenzeilen, Diagramme, Formulare
+   ============================================================ */
+
+/* ---------- Panels ---------- */
+.panel{background:linear-gradient(158deg,var(--panel),#0a0814 85%);border:1px solid var(--line);
+  border-radius:2px;padding:13px;margin-bottom:11px;position:relative;overflow:hidden}
+.panel::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;
+  background:linear-gradient(90deg,var(--acc),transparent 70%);opacity:.9}
+.eyebrow{font-size:9.5px;letter-spacing:.22em;color:var(--dim2);text-transform:uppercase;margin-bottom:9px;
+  display:flex;justify-content:space-between;align-items:center;gap:8px}
+.eyebrow b{color:var(--acc);font-weight:400}
+
+/* ---------- Buttons ---------- */
+.btn{display:block;width:100%;border:1px solid var(--acc);background:rgba(var(--accRGB),.1);color:var(--acc);
+  font-family:var(--f-head);font-size:19px;letter-spacing:.14em;text-transform:uppercase;padding:14px 10px;
+  border-radius:2px;cursor:pointer;transition:transform .08s,background .25s,box-shadow .25s,border-color .25s,color .25s;
+  box-shadow:0 0 18px rgba(var(--accRGB),.12), inset 0 0 22px rgba(var(--accRGB),.05)}
+.btn:active{transform:scale(.985);background:rgba(var(--accRGB),.22);box-shadow:0 0 34px rgba(var(--accRGB),.3)}
+.btn.ghost{border-color:var(--line2);color:var(--dim);background:transparent;font-size:15px;padding:12px 10px;box-shadow:none}
+.btn.ghost:active{background:rgba(255,255,255,.05)}
+.btn.ok{border-color:var(--ok);color:var(--ok);background:rgba(0,255,163,.1);box-shadow:0 0 20px rgba(0,255,163,.16)}
+.btn.warn{border-color:#5f4a1c;color:var(--coin);
+  background:repeating-linear-gradient(45deg,rgba(255,194,51,.09) 0 8px,transparent 8px 16px);box-shadow:none}
+.btn:disabled{opacity:.3;pointer-events:none}
+.btnrow{display:flex;gap:8px}.btnrow>*{flex:1}
+
+.mini{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:9px 10px;
+  border:1px solid var(--line2);background:transparent;color:var(--dim);cursor:pointer;border-radius:2px;transition:.2s}
+.mini:active{background:rgba(255,255,255,.06)}
+.mini.on{border-color:var(--cc,var(--acc));color:var(--cc,var(--acc));background:rgba(255,255,255,.05);
+  box-shadow:0 0 14px -4px var(--cc,var(--acc))}
+.mini.wide{width:100%;margin-top:8px}
+.mini.danger{border-color:#57202f;color:#ff7d99}
+
+/* ---------- Chips ---------- */
+.chip{font-size:10.5px;letter-spacing:.09em;color:var(--dim);border:1px solid var(--line);padding:5px 9px;
+  background:rgba(255,255,255,.03);border-radius:2px}
+.chip b{color:var(--txt);font-weight:400}
+
+/* ---------- Listenzeilen ---------- */
+.row{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .g{flex:1;min-width:0}
+.row .t{font-size:12.5px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .s{font-size:10px;color:var(--dim2);letter-spacing:.07em;text-transform:uppercase}
+.row .v{font-size:11px;text-align:right;white-space:nowrap;color:var(--dim)}
+.rankname{font-family:var(--f-head);font-size:15px;letter-spacing:.08em;text-transform:uppercase}
+.empty-note{color:var(--dim2);font-size:12px;text-align:center;padding:18px 6px}
+
+/* ---------- Item-Zeilen (Shop, Karten) ---------- */
+.item{display:flex;gap:11px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .ic{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border:1px solid var(--line2);
+  font-size:16px;color:var(--acc);border-radius:2px}
+.item .g{flex:1;min-width:0}
+.item .n{font-family:var(--f-head);font-size:15px;letter-spacing:.05em}
+.item .d{font-size:10.5px;color:var(--dim2);line-height:1.35}
+
+/* ---------- Diagramme ---------- */
+.bars{display:flex;align-items:flex-end;gap:3px;height:66px;margin-top:6px}
+.bars div{flex:1;min-height:4px;border-radius:1px 1px 0 0}
+.dist .l{display:flex;justify-content:space-between;font-size:10.5px;color:var(--dim);margin:8px 0 3px;letter-spacing:.07em}
+.dist .b{height:5px;background:#16122a;border-radius:2px;overflow:hidden}
+.dist .b i{display:block;height:100%}
+
+/* ---------- Formulare ---------- */
+textarea{width:100%;height:104px;background:rgba(0,0,0,.4);border:1px solid var(--line);color:var(--dim);
+  font-family:var(--f-mono);font-size:10px;padding:8px;border-radius:2px}
+.fin{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--line2);color:var(--txt);
+  font-family:var(--f-mono);font-size:13px;padding:10px;border-radius:2px;margin-bottom:4px}
+.fin:focus{outline:none;border-color:var(--acc);box-shadow:0 0 14px -6px var(--acc)}
+.flab{display:block;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim2);margin:12px 0 5px}
+.fhint{font-size:10.5px;color:var(--dim2);line-height:1.45;margin:6px 0 10px}
+.fpick{display:flex;flex-wrap:wrap;gap:6px}
+.frow{display:flex;gap:7px;align-items:center;margin-bottom:7px}
+.frow .fin{margin-bottom:0}
+.frow .del{flex:0 0 auto}

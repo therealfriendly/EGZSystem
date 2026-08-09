@@ -1,0 +1,46 @@
+/* ============================================================
+   BASE — Design-Tokens, Reset, Grundlayout, Screen-Container
+   Hier zuerst schauen, wenn Farben oder Schriften global
+   geaendert werden sollen.
+   ============================================================ */
+
+:root{
+  --bg:#070610; --panel:#100e1f; --line:#241f3c; --line2:#372f58;
+  --txt:#efedfb; --dim:#918bb4; --dim2:#615a86;
+  --schritte:#00ffa3; --training:#ff2e63; --lernen:#a86bff; --hack:#00e5ff;
+  --acc:#00ffa3; --accRGB:0,255,163;
+  --danger:#ff2e63; --ok:#00ffa3; --coin:#ffc233;
+  --f-head:"Avenir Next Condensed","Oswald","Arial Narrow","Roboto Condensed",Impact,sans-serif;
+  --f-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  --hudH:124px;   /* Hoehe der Kopfzeile inkl. Checklistenreihe */
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--txt)}
+body{
+  font-family:var(--f-mono);font-size:14px;line-height:1.45;min-height:100vh;overscroll-behavior-y:none;
+  background:
+    radial-gradient(70% 45% at 8% 0%, rgba(0,229,255,.14), transparent 60%),
+    radial-gradient(60% 40% at 100% 22%, rgba(255,46,99,.12), transparent 62%),
+    radial-gradient(80% 50% at 50% 105%, rgba(168,107,255,.14), transparent 65%),
+    var(--bg);
+  background-attachment:fixed;
+  padding:calc(env(safe-area-inset-top) + var(--hudH)) 0 calc(env(safe-area-inset-bottom) + 78px);
+  transition:background .8s ease;
+}
+
+/* Film-Look ueber allem */
+#grain{position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.4;
+  background:repeating-linear-gradient(180deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+#vig{position:fixed;inset:0;pointer-events:none;z-index:89;
+  background:radial-gradient(135% 95% at 50% 40%,transparent 52%,rgba(3,2,8,.8))}
+
+h1,h2,h3,.head{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0}
+.wrap{padding:0 13px;max-width:640px;margin:0 auto}
+
+/* Ein .screen pro Tab — Umschaltung passiert in js/app.js */
+.screen{display:none}
+.screen.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}

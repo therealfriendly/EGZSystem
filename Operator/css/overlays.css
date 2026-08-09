@@ -1,0 +1,45 @@
+/* ============================================================
+   OVERLAYS — Toasts, Aufstiegs-Flash, Belohnung, Modal
+   Gefüllt von js/fx.js
+   ============================================================ */
+
+#toast{position:fixed;left:13px;right:13px;bottom:calc(env(safe-area-inset-bottom) + 80px);z-index:95;
+  pointer-events:none;display:flex;flex-direction:column;gap:6px;align-items:center}
+.tst{background:#120f22;border:1px solid var(--line2);border-left:3px solid var(--acc);padding:9px 14px;
+  font-size:12px;animation:tin .3s ease;box-shadow:0 12px 34px rgba(0,0,0,.7);border-radius:2px;
+  max-width:100%;text-align:center}
+.tst.bad{border-left-color:var(--danger);color:#ffb3c4}
+.tst.good{border-left-color:var(--ok)}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+#flash{position:fixed;inset:0;z-index:97;display:none;place-items:center;text-align:center;padding:24px;
+  background:radial-gradient(60% 50% at 50% 45%,rgba(var(--accRGB),.18),rgba(7,6,16,.96) 70%)}
+#flash.on{display:grid;animation:fade .3s ease}
+#flash .lvl{font-family:var(--f-head);font-size:13px;letter-spacing:.42em;color:var(--dim)}
+#flash .big{font-family:var(--f-head);font-size:52px;line-height:.98;color:var(--rc,#00ffa3);margin:6px 0;
+  text-shadow:0 0 50px currentColor}
+#flash .sub{color:var(--txt);font-size:14px;letter-spacing:.14em}
+
+.loot{position:fixed;left:0;right:0;top:34%;z-index:95;text-align:center;pointer-events:none;padding:0 16px;
+  font-family:var(--f-head);font-size:31px;color:var(--ok);text-shadow:0 0 34px currentColor;
+  animation:lootup 1.15s ease forwards}
+@keyframes lootup{0%{opacity:0;transform:translateY(20px) scale(.9)}20%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-42px)}}
+
+/* ============================================================
+   MODAL — Checklisten- und Karteneditor
+   ============================================================ */
+#modal{position:fixed;inset:0;z-index:98;display:none;background:rgba(4,3,10,.82);
+  align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(3px)}
+#modal.on{display:flex;animation:fade .2s ease}
+
+.sheet{width:100%;max-width:640px;max-height:88vh;display:flex;flex-direction:column;
+  background:linear-gradient(158deg,var(--panel),#0a0814 85%);
+  border:1px solid var(--line2);border-bottom:0;border-radius:6px 6px 0 0;
+  animation:sheetup .28s cubic-bezier(.2,.9,.25,1);box-shadow:0 -14px 50px rgba(0,0,0,.8)}
+@keyframes sheetup{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+
+.sheethead{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:13px;border-bottom:1px solid var(--line)}
+.sheethead b{font-family:var(--f-head);font-size:17px;letter-spacing:.09em;text-transform:uppercase}
+.sheetbody{padding:13px calc(13px) calc(env(safe-area-inset-bottom) + 20px);overflow-y:auto;
+  -webkit-overflow-scrolling:touch}
