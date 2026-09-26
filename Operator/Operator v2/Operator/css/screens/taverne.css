@@ -1,0 +1,331 @@
+/* Operator – Taverne (Abenteuer, Schmuggler, Zirkus-Tänze)
+   Warme Taverne (Bernstein/Gold) auf dunklem Labor-Glas. Alle Klassen beginnen mit .tav- */
+
+.tav {
+  --tav-amber: #ffb04a;
+  --tav-cream: #f3ead8;
+  --tav-line: rgba(233, 196, 106, 0.2);
+  --tav-line-2: rgba(233, 196, 106, 0.38);
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+/* Warmes Licht im Rahmen der Taverne (nur Browser mit :has, sonst normaler Labor-Look) */
+.screen:has(.tav) {
+  background:
+    radial-gradient(110% 50% at 50% -12%, rgba(255, 168, 64, 0.11), transparent 62%),
+    radial-gradient(70% 40% at 100% 105%, rgba(255, 130, 40, 0.06), transparent 70%),
+    linear-gradient(180deg, #0d131a 0%, #080b10 100%);
+}
+.screen:has(.tav) .tab--active { color: var(--gold); border-bottom-color: var(--gold); text-shadow: 0 0 12px rgba(233, 196, 106, 0.5); }
+
+/* ---------- Grundbausteine ---------- */
+.tav-i { display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.tav-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+@media (min-width: 900px) {
+  .tav-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.tav-card {
+  background:
+    radial-gradient(130% 90% at 0% 0%, rgba(255, 176, 74, 0.075), transparent 55%),
+    linear-gradient(180deg, rgba(30, 36, 44, 0.8), rgba(13, 18, 25, 0.92));
+}
+.tav .section-title { color: var(--tav-amber); margin-top: 4px; }
+
+.tav-info {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  background: rgba(255, 176, 74, 0.06); border: 1px solid var(--tav-line);
+  color: #dccfb6; font-size: 0.87rem; line-height: 1.4;
+}
+.tav-info .ico { width: 18px; height: 18px; color: var(--tav-amber); margin-top: 1px; }
+.tav-info--warn { background: rgba(255, 61, 87, 0.07); border-color: rgba(255, 61, 87, 0.3); color: #f3c9cf; }
+.tav-info--warn .ico { color: var(--red); }
+
+
+/* ---------- Händler-Kopf ---------- */
+.tav-merchant { display: flex; align-items: center; gap: 14px; padding: 14px 16px; }
+.tav-portrait {
+  position: relative; flex: none; width: 80px; height: 80px; border-radius: 16px;
+  display: grid; place-items: center; color: #ffd78e;
+  background: radial-gradient(circle at 50% 36%, rgba(255, 196, 110, 0.42), rgba(110, 58, 14, 0.55) 44%, rgba(20, 12, 6, 0.96) 78%);
+  border: 2px solid rgba(233, 196, 106, 0.9);
+  box-shadow: 0 0 0 3px #0b1016, 0 0 0 4px rgba(233, 196, 106, 0.35), 0 0 26px rgba(255, 170, 60, 0.28), inset 0 0 18px rgba(0, 0, 0, 0.6);
+  animation: tavFlicker 5s ease-in-out infinite;
+}
+.tav-portrait::before { /* innerer Zierrahmen */
+  content: ''; position: absolute; inset: 4px; border-radius: 11px; pointer-events: none;
+  border: 1px dashed rgba(233, 196, 106, 0.28);
+}
+.tav-portrait::after { /* Namensschild-Kerbe unten */
+  content: ''; position: absolute; left: 50%; bottom: -6px; width: 22px; height: 8px; margin-left: -11px;
+  border-radius: 2px; background: linear-gradient(180deg, #f5d47e, #b8913a); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.tav-portrait__icon .ico { width: 44px; height: 44px; stroke-width: 1.5; filter: drop-shadow(0 0 8px rgba(255, 180, 80, 0.65)); }
+.tav-portrait--img { background: #120c06; }
+.tav-portrait--img::before { display: none; }
+.tav-portrait img { width: 100%; height: 100%; object-fit: cover; border-radius: 13px; }
+
+.tav-merchant__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.tav-merchant__role { font-family: var(--font-display); font-weight: 600; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tav-amber); }
+.tav-merchant__name { font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; line-height: 1.15; color: var(--gold); text-shadow: 0 0 18px rgba(233, 196, 106, 0.25); }
+.tav-merchant__say {
+  position: relative; margin-top: 7px; padding: 8px 11px;
+  border-radius: 3px 12px 12px 12px;
+  background: rgba(255, 190, 100, 0.075); border: 1px solid var(--tav-line);
+  color: #eadfc9; font-size: 0.9rem; line-height: 1.38;
+  quotes: '„' '“';
+}
+.tav-merchant__say::before { content: open-quote; color: var(--tav-amber); }
+.tav-merchant__say::after { content: close-quote; color: var(--tav-amber); }
+
+@keyframes tavFlicker {
+  0%, 100% { box-shadow: 0 0 0 3px #0b1016, 0 0 0 4px rgba(233, 196, 106, 0.35), 0 0 26px rgba(255, 170, 60, 0.28), inset 0 0 18px rgba(0, 0, 0, 0.6); }
+  42% { box-shadow: 0 0 0 3px #0b1016, 0 0 0 4px rgba(233, 196, 106, 0.45), 0 0 36px rgba(255, 170, 60, 0.42), inset 0 0 14px rgba(0, 0, 0, 0.55); }
+  48% { box-shadow: 0 0 0 3px #0b1016, 0 0 0 4px rgba(233, 196, 106, 0.3), 0 0 20px rgba(255, 170, 60, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.65); }
+  56% { box-shadow: 0 0 0 3px #0b1016, 0 0 0 4px rgba(233, 196, 106, 0.4), 0 0 30px rgba(255, 170, 60, 0.34), inset 0 0 16px rgba(0, 0, 0, 0.6); }
+}
+
+/* ================= Abenteuer ================= */
+
+/* Laufender Kampf */
+.tav-fight {
+  display: flex; flex-direction: column; gap: 10px;
+  background: radial-gradient(120% 90% at 0% 0%, rgba(255, 61, 87, 0.13), transparent 60%), linear-gradient(180deg, rgba(34, 22, 28, 0.85), rgba(16, 12, 16, 0.92));
+}
+.tav-fight__top { display: flex; align-items: center; gap: 9px; }
+.tav-fight__top .chip { margin-left: auto; }
+.tav-fight__pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--red); animation: tavPing 1.4s ease-out infinite; }
+.tav-fight__kicker { font-family: var(--font-display); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--red); }
+.tav-fight__name { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; line-height: 1.15; }
+.tav-fight__meta { display: flex; align-items: center; gap: 6px; color: var(--text-dim); font-size: 0.88rem; }
+.tav-fight__meta .ico { width: 17px; height: 17px; color: var(--cyan); }
+@keyframes tavPing {
+  0% { box-shadow: 0 0 0 0 rgba(255, 61, 87, 0.6); }
+  80%, 100% { box-shadow: 0 0 0 10px rgba(255, 61, 87, 0); }
+}
+
+/* Auftrags-Karte */
+.tav-offer { --d: var(--gold); display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 12px 18px; overflow: hidden; }
+.tav-offer__stripe { position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 0 3px 3px 0; background: var(--d); box-shadow: 0 0 12px var(--d); }
+.tav-offer__kicker { display: flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 600; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
+.tav-offer__kicker .ico { width: 15px; height: 15px; color: var(--tav-amber); }
+.tav-offer__tier { margin-left: auto; display: inline-flex; gap: 5px; padding-right: 2px; }
+.tav-offer__tier i { width: 7px; height: 7px; transform: rotate(45deg); border: 1px solid var(--d); opacity: 0.45; }
+.tav-offer__tier i.is-on { background: var(--d); opacity: 1; box-shadow: 0 0 6px var(--d); }
+.tav-offer__title { font-size: 1.12rem; line-height: 1.25; color: var(--tav-cream); letter-spacing: 0.01em; }
+.tav-offer__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.tav-chip-muscle .ico { color: var(--cyan); }
+.tav-chip-enemy { border-style: dashed; }
+.tav-chip-enemy .ico { opacity: 0.8; }
+.tav-offer__actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(233, 196, 106, 0.12); }
+.tav-offer__skip { min-height: 44px; color: var(--text-dim); border-color: transparent; padding: 0 10px; }
+.tav-offer__skip:hover { color: var(--text); border-color: var(--tav-line); }
+.tav-offer__skip .ico { width: 16px; height: 16px; }
+/* Wie oft heute noch gratis ablehnen */
+.tav-offer__skip-n {
+  display: inline-grid; place-items: center; min-width: 26px; height: 20px; padding: 0 5px; margin-left: 2px;
+  border-radius: 999px; border: 1px solid rgba(233, 196, 106, 0.45); background: rgba(233, 196, 106, 0.12);
+  color: var(--gold); font-size: 0.72rem; letter-spacing: 0; line-height: 1;
+}
+/* Skip-Regel über den Aufträgen */
+.tav-skip { margin-top: -4px; }
+.tav-skip--none { color: var(--text-dim); background: rgba(20, 24, 30, 0.6); border-color: var(--line); }
+.tav-skip--none .ico { color: var(--text-faint); }
+.tav-offer__accept { min-width: 148px; }
+.tav-offer__hint { display: flex; align-items: center; gap: 6px; margin-top: -2px; color: var(--text-faint); font-size: 0.8rem; }
+.tav-offer__hint .ico { width: 14px; height: 14px; }
+/* Laufender Auftrag: Knopf füllt den Rest der Zeile; auf schmalen Handys rutscht er unter den Chip (volle Breite) */
+.tav-offer__actions--live { flex-wrap: wrap; }
+.tav-offer__resume { flex: 1 1 auto; min-width: 0; color: #ffc2cb; border-color: rgba(255, 61, 87, 0.5); background: rgba(255, 61, 87, 0.1); }
+.tav-offer__resume:hover { border-color: var(--red); }
+.tav-offer--active { border-color: rgba(255, 61, 87, 0.45); box-shadow: 0 0 0 1px rgba(255, 61, 87, 0.25), 0 0 24px rgba(255, 61, 87, 0.12); }
+.tav-offer--new { animation: tavDeal 0.55s cubic-bezier(.2, .9, .3, 1.15) both; }
+@keyframes tavDeal {
+  0% { opacity: 0; transform: translateY(10px) rotate(-1.2deg) scale(0.97); box-shadow: 0 0 0 1px rgba(233, 196, 106, 0.8), 0 0 40px rgba(255, 176, 74, 0.45); }
+  60% { opacity: 1; transform: none; }
+  100% { box-shadow: none; }
+}
+
+/* Muskel-Chancen */
+.tav-chances { display: flex; flex-direction: column; gap: 12px; }
+.tav-chances .card__title .ico { color: var(--tav-amber); }
+.tav-chances__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.tav-chance { display: grid; grid-template-columns: 26px minmax(88px, 116px) minmax(0, 1fr) 46px; align-items: center; gap: 10px; }
+.tav-chance__icon { color: var(--cyan); display: grid; place-items: center; }
+.tav-chance__icon .ico { width: 21px; height: 21px; }
+.tav-chance__name { min-width: 0; line-height: 1.2; }
+.tav-chance__name b { display: block; font-family: var(--font-display); font-size: 0.93rem; }
+.tav-chance__name small { display: block; color: var(--text-faint); font-size: 0.72rem; white-space: nowrap; }
+.tav-chance__pct { text-align: right; font-weight: 700; color: var(--gold); }
+.tav-chances__note { color: var(--text-dim); font-size: 0.85rem; line-height: 1.4; }
+
+/* Arena-Hinweis */
+.tav-arena {
+  display: flex; align-items: center; gap: 14px;
+  background: radial-gradient(120% 120% at 0% 50%, rgba(255, 61, 87, 0.15), transparent 60%), linear-gradient(180deg, rgba(30, 22, 28, 0.85), rgba(14, 12, 17, 0.92));
+}
+.tav-arena__badge {
+  width: 56px; height: 56px; flex: none; display: grid; place-items: center; border-radius: 14px;
+  border: 1.5px solid rgba(255, 61, 87, 0.6); color: var(--red); background: rgba(255, 61, 87, 0.08);
+  box-shadow: 0 0 22px rgba(255, 61, 87, 0.22), inset 0 0 14px rgba(255, 61, 87, 0.12);
+}
+.tav-arena__badge .ico { width: 30px; height: 30px; }
+.tav-arena__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.tav-arena__text b { font-family: var(--font-display); font-size: 1.12rem; letter-spacing: 0.02em; }
+.tav-arena__text span { color: var(--text-dim); font-size: 0.88rem; line-height: 1.35; }
+.tav-arena__go { color: var(--red); display: grid; place-items: center; transition: transform 0.15s; }
+.tav-arena:hover .tav-arena__go { transform: translateX(3px); }
+@media (min-width: 900px) {
+  .tav-arena { flex-direction: column; justify-content: center; text-align: center; gap: 12px; padding: 22px 18px; }
+  .tav-arena__text { flex: none; }
+  .tav-arena__badge { width: 72px; height: 72px; border-radius: 18px; }
+  .tav-arena__badge .ico { width: 40px; height: 40px; }
+  .tav-arena__text b { font-size: 1.3rem; }
+}
+
+/* ================= Schmuggler ================= */
+
+/* Laufender Auftrag */
+.tav-run { display: flex; flex-direction: column; gap: 14px; }
+.tav-run__kicker { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--tav-amber); }
+.tav-run__pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--tav-amber); animation: tavPingAmber 1.4s ease-out infinite; }
+.tav-run.is-expired .tav-run__kicker { color: var(--red); }
+.tav-run.is-expired .tav-run__pulse { background: var(--red); animation-name: tavPing; }
+@keyframes tavPingAmber {
+  0% { box-shadow: 0 0 0 0 rgba(255, 176, 74, 0.6); }
+  80%, 100% { box-shadow: 0 0 0 10px rgba(255, 176, 74, 0); }
+}
+.tav-run__main { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.tav-ring { position: relative; width: 200px; height: 200px; flex: none; }
+.tav-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.tav-ring__track { fill: rgba(4, 9, 14, 0.65); stroke: rgba(233, 196, 106, 0.12); stroke-width: 8; }
+.tav-ring__ticks { fill: none; stroke: rgba(233, 196, 106, 0.28); stroke-width: 3; stroke-dasharray: 0.8 3.7; }
+.tav-ring__fill { fill: none; stroke: var(--tav-amber); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.3s; filter: drop-shadow(0 0 6px rgba(255, 176, 74, 0.55)); }
+.tav-run.is-late .tav-ring__fill, .tav-run.is-expired .tav-ring__fill { stroke: var(--red); filter: drop-shadow(0 0 6px rgba(255, 61, 87, 0.6)); }
+.tav-ring__center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.tav-ring__time { font-size: 2.7rem; font-weight: 700; line-height: 1; color: #fff3dc; text-shadow: 0 0 22px rgba(255, 176, 74, 0.45); }
+.tav-ring__label { font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); }
+.tav-run.is-late .tav-ring__time { color: #ffc2cb; }
+.tav-run.is-expired .tav-ring__time { color: var(--red); text-shadow: 0 0 22px rgba(255, 61, 87, 0.5); animation: pulse 1.2s ease-in-out infinite; }
+.tav-run.is-expired .tav-ring__label { color: var(--red); }
+.tav-run__info { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.tav-run__type { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 600; font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--tav-amber); }
+.tav-run__type .ico { width: 16px; height: 16px; }
+.tav-run__name { font-size: 1.3rem; line-height: 1.2; color: var(--tav-cream); }
+.tav-run__req { font-size: 1.12rem; font-weight: 700; color: var(--gold); }
+.tav-run__how { color: var(--text-dim); font-size: 0.86rem; line-height: 1.4; margin-top: 4px; }
+.tav-run__ask { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 12px; border-radius: var(--radius-sm); background: rgba(255, 61, 87, 0.1); border: 1px solid rgba(255, 61, 87, 0.38); color: #ffd0d6; font-weight: 600; text-align: left; }
+.tav-run__ask .ico { color: var(--red); }
+.tav-run__actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.tav-run__fail { color: #ffb8c1; border-color: rgba(255, 61, 87, 0.45); }
+.tav-run__fail:hover { border-color: var(--red); }
+.tav-run__cancel-wrap { display: flex; justify-content: center; margin-top: -4px; }
+.tav-run__cancel { min-height: 44px; color: var(--text-dim); border-color: transparent; }
+.tav-run__cancel:hover { color: var(--text); border-color: var(--line); }
+@media (min-width: 480px) {
+  .tav-run__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 600px) {
+  .tav-run__main { flex-direction: row; align-items: center; text-align: left; gap: 22px; }
+  .tav-run__info { align-items: flex-start; }
+}
+
+/* Filter */
+.tav-filters {
+  display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; padding: 2px 28px 4px 2px; margin: -4px -2px 0;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  /* rechts ausblenden = "hier geht es weiter" */
+  -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent);
+}
+.tav-filters::-webkit-scrollbar { display: none; }
+.tav-filter { min-height: 44px; padding: 4px 13px; flex: none; color: var(--text-dim); border-color: var(--tav-line); background: rgba(20, 24, 30, 0.75); }
+.tav-filter:hover { color: var(--text); border-color: var(--tav-line-2); }
+.tav-filter.is-on { color: #2a1c02; background: linear-gradient(180deg, #f5d47e, #c99a3c); border-color: transparent; box-shadow: 0 4px 16px rgba(233, 196, 106, 0.2); }
+.tav-filter__n { font-size: 0.7rem; opacity: 0.65; margin-left: 1px; }
+@media (min-width: 900px) {
+  .tav-filters { flex-wrap: wrap; overflow: visible; padding-right: 2px; -webkit-mask-image: none; mask-image: none; }
+}
+
+/* Auftrags-Liste */
+.tav-jobs { gap: 10px; }
+.tav-job {
+  display: flex; flex-direction: column; gap: 8px; padding: 12px 14px;
+  background: linear-gradient(180deg, rgba(28, 33, 40, 0.75), rgba(12, 17, 23, 0.88));
+  border-color: rgba(233, 196, 106, 0.14);
+}
+.tav-job__head { display: flex; align-items: center; gap: 11px; }
+.tav-job__badge { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 10px; background: rgba(255, 176, 74, 0.08); border: 1px solid rgba(233, 196, 106, 0.3); color: var(--tav-amber); }
+.tav-job__badge .ico { width: 22px; height: 22px; }
+.tav-job__names { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.tav-job__name { font-size: 1rem; line-height: 1.2; color: var(--tav-cream); }
+.tav-job__type { font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
+.tav-job__lvl { flex: none; }
+.tav-job__req { font-size: 1.08rem; font-weight: 700; color: #ffdca0; }
+.tav-job__how { color: var(--text-dim); font-size: 0.84rem; line-height: 1.4; }
+.tav-job__foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 4px; }
+.tav-job__record { display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-display); font-weight: 600; font-size: 0.84rem; }
+.tav-job__record > span { display: inline-flex; align-items: center; gap: 3px; }
+.tav-job__record .ico { width: 15px; height: 15px; }
+.tav-job__accept { min-height: 44px; padding: 0 18px; font-size: 0.85rem; }
+.tav-job--running { border-color: rgba(233, 196, 106, 0.6); box-shadow: 0 0 0 1px rgba(233, 196, 106, 0.3), 0 0 22px rgba(255, 176, 74, 0.14); }
+
+/* Dialog "Auftrag annehmen" */
+.tav-ask__story { color: #e6d8bd; font-style: italic; line-height: 1.4; padding-left: 10px; border-left: 2px solid var(--tav-amber); }
+.tav-ask__req { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; color: var(--gold); }
+.tav-ask__req .ico { width: 26px; height: 26px; color: var(--tav-amber); }
+.tav-ask__warn { display: flex; align-items: flex-start; gap: 9px; padding: 10px 12px; border-radius: var(--radius-sm); background: rgba(255, 176, 74, 0.08); border: 1px solid rgba(255, 176, 74, 0.32); color: #f3dfbd; font-size: 0.9rem; line-height: 1.4; }
+.tav-ask__warn .ico { color: var(--tav-amber); margin-top: 1px; }
+
+/* ================= Zirkus-Tänze ================= */
+.tav-abs { display: flex; flex-direction: column; gap: 10px; }
+.tav-abs__head { display: flex; align-items: center; gap: 10px; }
+.tav-abs__badge { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border-radius: 10px; background: rgba(255, 176, 74, 0.08); border: 1px solid rgba(233, 196, 106, 0.32); color: var(--tav-amber); }
+.tav-abs__badge .ico { width: 20px; height: 20px; }
+.tav-abs__name { flex: 1; min-width: 0; font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+.tav-abs__unit { flex: none; }
+.tav-abs__big { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; line-height: 1.12; color: var(--tav-cream); }
+.tav-abs__big b { color: var(--gold); font-size: 1.12em; text-shadow: 0 0 18px rgba(233, 196, 106, 0.3); white-space: nowrap; }
+.tav-abs__sub { color: var(--text-dim); font-size: 0.95rem; margin-top: -4px; }
+.tav-abs__sub .num { color: var(--text); font-weight: 700; }
+.tav-abs.is-live .tav-abs__sub .num { color: var(--cyan); }
+.tav-abs__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.tav-pill { display: flex; flex-direction: column; gap: 1px; min-width: 0; padding: 6px 10px; border-radius: 8px; background: rgba(255, 176, 74, 0.06); border: 1px solid rgba(233, 196, 106, 0.16); }
+.tav-pill small { font-family: var(--font-display); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tav-pill b { color: var(--gold); font-size: 1rem; line-height: 1.2; }
+.tav-abs__rank { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 10px; border-top: 1px solid rgba(233, 196, 106, 0.12); }
+.tav-abs__hint { color: var(--text-faint); font-size: 0.8rem; line-height: 1.35; }
+
+/* Stoppuhr */
+.tav-watch {
+  display: flex; align-items: center; gap: 12px; padding: 12px;
+  border-radius: 12px; background: rgba(4, 9, 14, 0.72); border: 1px solid var(--line);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.tav-watch__face { flex: 1; min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; align-items: center; }
+.tav-watch__ico { grid-row: 1 / 3; color: var(--cyan); opacity: 0.8; }
+.tav-watch__ico .ico { width: 26px; height: 26px; }
+.tav-watch__time { display: flex; align-items: baseline; white-space: nowrap; }
+.tav-watch__main { font-size: 2.3rem; font-weight: 700; line-height: 1; color: var(--text); }
+.tav-watch__tenth { font-size: 1.15rem; font-weight: 600; color: var(--text-dim); margin-left: 1px; }
+.tav-watch__hint { font-size: 0.76rem; color: var(--text-faint); line-height: 1.25; margin-top: 3px; }
+.tav-watch__btn { flex: none; min-width: 112px; }
+.tav-watch.is-running { border-color: rgba(62, 230, 208, 0.6); box-shadow: 0 0 0 1px rgba(62, 230, 208, 0.25), 0 0 24px rgba(62, 230, 208, 0.14); }
+.tav-watch.is-running .tav-watch__main { color: var(--cyan); text-shadow: 0 0 18px rgba(62, 230, 208, 0.45); }
+.tav-watch.is-running .tav-watch__ico { animation: pulse 1s ease-in-out infinite; }
+.tav-watch.is-reached { border-color: rgba(166, 255, 77, 0.65); box-shadow: 0 0 0 1px rgba(166, 255, 77, 0.25), 0 0 24px rgba(166, 255, 77, 0.14); }
+.tav-watch.is-reached .tav-watch__main, .tav-watch.is-reached .tav-watch__hint { color: var(--lime); text-shadow: 0 0 18px rgba(166, 255, 77, 0.35); }
+.tav-watch.is-stopped .tav-watch__hint { color: var(--gold); }
+@media (max-width: 370px) {
+  .tav-watch__main { font-size: 1.9rem; }
+  .tav-watch__btn { min-width: 96px; padding: 0 14px; }
+}
+
+/* Eintragen */
+.tav-entry { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; }
+.tav-entry__btn { min-height: 46px; }
+.tav-entry__extra { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.tav-rest { min-height: 44px; padding: 4px 12px; color: var(--gold); border-color: var(--tav-line-2); background: rgba(233, 196, 106, 0.08); }
+.tav-rest .ico { width: 14px; height: 14px; }
+.tav-giveup { min-height: 44px; color: #ffb8c1; border-color: rgba(255, 61, 87, 0.35); }
+.tav-giveup:hover { border-color: var(--red); }

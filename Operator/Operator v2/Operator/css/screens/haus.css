@@ -1,0 +1,343 @@
+/* Operator – Haus: Gym (.gym-…) und Kalorienschulden (.kal-…)
+   Handy zuerst (390 px), ab 1000/1100 px zwei Spalten. */
+
+/* ================= Gemeinsam ================= */
+.screen__inner.gym, .screen__inner.kal { max-width: 1080px; }
+
+.gym-kicker, .kal-kicker {
+  font-family: var(--font-display); font-weight: 700; font-size: 0.72rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan);
+}
+.gym-kicker--dim { color: var(--text-dim); }
+.kal-kicker--ok { color: var(--lime); }
+
+/* Bühne für den Hologramm-Körper (Labor-Scanner) */
+.gym-holo, .kal-holo {
+  position: relative; overflow: hidden; min-width: 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(70% 38% at 50% 100%, rgba(62, 230, 208, 0.16), transparent 70%),
+    radial-gradient(60% 50% at 50% 45%, rgba(62, 230, 208, 0.07), transparent 70%),
+    repeating-linear-gradient(180deg, rgba(62, 230, 208, 0.05) 0 1px, transparent 1px 14px),
+    rgba(4, 9, 14, 0.7);
+}
+.gym-holo:not(.holo)::after, .kal-holo:not(.holo)::after { /* Plattform unter dem Ersatz-Körper (das echte Hologramm zeichnet eine eigene) */
+  content: ''; position: absolute; left: 18%; right: 18%; bottom: 6px; height: 12px; pointer-events: none;
+  border-radius: 50%; border: 1px solid rgba(62, 230, 208, 0.45);
+  box-shadow: 0 0 16px rgba(62, 230, 208, 0.35), inset 0 0 10px rgba(62, 230, 208, 0.25);
+}
+
+/* ================= GYM ================= */
+
+/* ---------- Auswahl ---------- */
+.gym-pick { display: flex; flex-direction: column; gap: 14px; }
+
+.gym-hero { display: grid; grid-template-columns: 124px minmax(0, 1fr); gap: 14px; align-items: center; padding: 12px; }
+.gym-hero .gym-holo { height: 190px; }
+.gym-hero__text { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.gym-hero__title { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.gym-steps { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.gym-steps li {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px 3px 3px; border-radius: 999px;
+  border: 1px solid var(--line); background: rgba(4, 9, 14, 0.5);
+  font-family: var(--font-display); font-weight: 600; font-size: 0.72rem; letter-spacing: 0.04em; color: var(--text-dim);
+}
+.gym-steps b { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: rgba(62, 230, 208, 0.16); color: var(--cyan); font-size: 0.68rem; }
+
+.gym-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+
+.gym-card { display: flex; flex-direction: column; gap: 12px; transition: border-color 0.15s, box-shadow 0.2s, transform 0.12s; }
+.gym-card:hover { border-color: var(--line-2); }
+.gym-card.is-selected { border-color: var(--line-strong); box-shadow: var(--glow); }
+.gym-card.is-selected::before, .gym-card.is-selected::after { opacity: 1; }
+.gym-card--bauch.is-selected { border-color: rgba(233, 196, 106, 0.7); box-shadow: 0 0 0 1px rgba(233, 196, 106, 0.35), 0 0 22px rgba(233, 196, 106, 0.14); }
+
+.gym-card__head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.gym-card__icon {
+  flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 11px;
+  color: var(--cyan); background: rgba(62, 230, 208, 0.1); border: 1px solid var(--line-2);
+  box-shadow: inset 0 0 14px rgba(62, 230, 208, 0.1);
+}
+.gym-card__icon .ico { width: 26px; height: 26px; }
+.gym-card--bauch .gym-card__goal-val { color: var(--gold); }
+.gym-card--bauch .gym-card__icon { color: var(--gold); background: rgba(233, 196, 106, 0.1); border-color: rgba(233, 196, 106, 0.4); }
+.gym-card__name { flex: 1; min-width: 0; }
+.gym-card__name h3 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.gym-card__main { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.gym-card__xp { font-size: 2rem; font-weight: 700; line-height: 1; white-space: nowrap; }
+.gym-card__xp small { font-size: 0.8rem; color: var(--text-dim); margin-left: 5px; font-weight: 600; }
+.gym-card__goal { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; min-width: 0; }
+.gym-card__goal--left { align-items: flex-start; text-align: left; }
+.gym-card__goal-label { font-family: var(--font-display); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
+.gym-card__goal-val { font-weight: 700; font-size: 1.05rem; color: var(--lime); white-space: nowrap; }
+.gym-card__goal-val small { font-size: 0.75rem; color: var(--text-dim); font-weight: 600; }
+.gym-card__rank { display: flex; flex-direction: column; gap: 5px; }
+.gym-card__text { line-height: 1.45; }
+
+/* Ersatz-Scanner, falls kein Hologramm geladen ist */
+.gym-scan { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.gym-scan__ring {
+  width: 70%; max-width: 150px; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%;
+  border: 1px dashed var(--line-strong); color: var(--cyan);
+  box-shadow: inset 0 0 30px rgba(62, 230, 208, 0.12), 0 0 20px rgba(62, 230, 208, 0.1);
+  animation: gymBreath 2.8s ease-in-out infinite;
+}
+.gym-scan__icon .ico { width: 54px; height: 54px; stroke-width: 1.5; filter: drop-shadow(0 0 8px rgba(62, 230, 208, 0.6)); }
+.gym-scan__label { font-family: var(--font-display); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); }
+.gym-scan.is-focus .gym-scan__label { color: var(--cyan); }
+.gym-scan.is-pulse .gym-scan__ring { animation: gymHit 0.5s ease-out, gymBreath 2.8s ease-in-out 0.5s infinite; }
+
+/* ---------- Training läuft ---------- */
+.gym-session { display: flex; flex-direction: column; gap: 14px; }
+.gym-session__a, .gym-session__b { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+.gym-live { display: flex; flex-direction: column; gap: 12px; transition: border-color 0.3s, box-shadow 0.3s; }
+.gym-live__head { display: flex; align-items: center; gap: 12px; }
+.gym-live__title { font-size: 1.35rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.gym-live__rank { flex: none; display: inline-flex; }
+.gym-live__route {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(4, 9, 14, 0.55);
+}
+.gym-live__step { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.gym-live__step small { font-family: var(--font-display); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
+.gym-live__step b { font-size: 1.1rem; white-space: nowrap; }
+.gym-live__step--goal { text-align: right; align-items: flex-end; }
+.gym-live__step--goal b { color: var(--lime); }
+.gym-live__arrow { color: var(--cyan); opacity: 0.8; }
+
+.gym-live__grid { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 14px; align-items: center; }
+.gym-live .gym-holo { height: 176px; }
+.gym-live__nums { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.gym-live__big { position: relative; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; }
+.gym-live__total { font-size: clamp(2.3rem, 11vw, 3.4rem); font-weight: 700; line-height: 1; transition: color 0.3s, text-shadow 0.3s; }
+.gym-live__of { color: var(--text-dim); font-weight: 600; font-size: 0.95rem; }
+.gym-live__hint { color: var(--text-dim); line-height: 1.4; }
+
+.gym-live.is-reached { border-color: rgba(166, 255, 77, 0.5); box-shadow: 0 0 0 1px rgba(166, 255, 77, 0.3), 0 0 30px rgba(166, 255, 77, 0.12); }
+.gym-live.is-reached::before, .gym-live.is-reached::after { border-color: var(--lime); opacity: 0.9; }
+.gym-live.is-reached .gym-live__total { color: var(--lime); text-shadow: 0 0 20px rgba(166, 255, 77, 0.45); }
+.gym-live.is-reached .gym-live__hint { color: var(--lime); }
+.gym-live.is-flash { animation: gymFlash 0.9s ease-out; }
+
+.gym-float {
+  position: absolute; left: 0; top: -4px; pointer-events: none;
+  font-weight: 700; font-size: 1.1rem; color: var(--cyan); text-shadow: 0 0 10px rgba(62, 230, 208, 0.7);
+  animation: floatUp 1.05s ease-out forwards;
+}
+.gym-live.is-reached .gym-float { color: var(--lime); text-shadow: 0 0 10px rgba(166, 255, 77, 0.7); }
+
+.gym-sets { display: flex; flex-direction: column; gap: 8px; }
+.gym-actions { display: flex; flex-direction: column; gap: 8px; }
+.gym-chip { color: var(--cyan); }
+
+@keyframes gymBreath { 0%, 100% { transform: scale(1); opacity: 0.85; } 50% { transform: scale(1.04); opacity: 1; } }
+@keyframes gymHit { 0% { transform: scale(1.18); box-shadow: 0 0 40px rgba(62, 230, 208, 0.6); } 100% { transform: scale(1); } }
+@keyframes gymFlash { 0% { box-shadow: 0 0 0 2px var(--lime), 0 0 60px rgba(166, 255, 77, 0.55); } 100% { box-shadow: 0 0 0 1px rgba(166, 255, 77, 0.3), 0 0 30px rgba(166, 255, 77, 0.12); } }
+
+/* etwas breiter: Karten nebeneinander */
+@media (min-width: 640px) {
+  .gym-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gym-hero { grid-template-columns: 170px minmax(0, 1fr); }
+  .gym-hero .gym-holo { height: 220px; }
+  .gym-live__grid { grid-template-columns: 170px minmax(0, 1fr); }
+  .gym-live .gym-holo { height: 230px; }
+}
+
+/* Desktop: zwei Spalten */
+@media (min-width: 1100px) {
+  .gym-pick { display: grid; grid-template-columns: 330px minmax(0, 1fr); align-items: start; gap: 18px; }
+  .gym-hero { position: sticky; top: 0; grid-template-columns: minmax(0, 1fr); padding: 14px; }
+  .gym-hero .gym-holo { height: 360px; }
+  .gym-session { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; gap: 18px; }
+  .gym-session__a { position: sticky; top: 0; }
+  .gym-live__grid { grid-template-columns: minmax(0, 1fr); }
+  .gym-live .gym-holo { height: 300px; }
+}
+
+/* ================= KALORIEN ================= */
+
+.kal-layout { display: flex; flex-direction: column; gap: 14px; }
+/* Handy: Spalten auflösen, damit die Reihenfolge Kopf → Eintragen → Tempo → Verlauf ist */
+.kal-col { display: contents; }
+.kal-hero { order: 1; }
+.kal-form { order: 2; }
+.kal-stats { order: 3; }
+.kal-hist { order: 4; }
+
+/* ---------- Kopf: Körper + Restschuld ---------- */
+.kal-hero { display: grid; grid-template-columns: minmax(112px, 38%) minmax(0, 1fr); gap: 14px; align-items: center; padding: 12px; }
+.kal-hero__body { min-width: 0; }
+.kal-holo { height: 250px; }
+.kal-hero__info { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.kal-big { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 6px; }
+.kal-big__num {
+  font-size: clamp(2rem, 9.4vw, 3.4rem); font-weight: 700; line-height: 1; letter-spacing: 0;
+  color: #ffb53d; text-shadow: 0 0 24px rgba(255, 122, 47, 0.4);
+}
+.kal-big__unit { font-family: var(--font-display); font-weight: 700; color: var(--text-dim); font-size: 1rem; }
+.kal-hero__sub { color: var(--text-dim); font-size: 0.9rem; }
+.kal-hero__sub b { color: var(--text); }
+.kal-dot { margin: 0 6px; color: var(--text-faint); }
+.kal-hero__paid { font-size: 0.88rem; color: var(--text-dim); }
+.kal-hero__paid .num { font-weight: 700; }
+.kal-hero__goal { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px 10px; padding-top: 8px; border-top: 1px solid var(--line); }
+.kal-hero__goal-text { font-size: 0.8rem; color: var(--text-faint); }
+.kal-hero__goal .btn { min-height: 44px; }   /* Tipp-Fläche mind. 44 px */
+
+/* ---------- ICH BIN GESUND! ---------- */
+.kal-hero.is-done { border-color: rgba(166, 255, 77, 0.5); box-shadow: 0 0 0 1px rgba(166, 255, 77, 0.25), 0 0 40px rgba(166, 255, 77, 0.14); }
+.kal-hero.is-done::before, .kal-hero.is-done::after { border-color: var(--lime); opacity: 0.9; }
+.kal-hero.is-done .kal-holo { background-color: rgba(8, 20, 8, 0.6); }
+.kal-proud__icon { color: var(--gold); filter: drop-shadow(0 0 14px rgba(233, 196, 106, 0.65)); animation: pop 0.6s ease-out both; }
+.kal-proud__icon .ico { width: 52px; height: 52px; stroke-width: 1.5; }
+.kal-proud__title {
+  font-size: clamp(1.55rem, 7.2vw, 2.4rem); line-height: 1.05; letter-spacing: 0.03em;
+  color: var(--lime); text-shadow: 0 0 24px rgba(166, 255, 77, 0.5);
+}
+.kal-proud__text { font-weight: 600; }
+/* schmale Handys (360 px): Knopf-Text passt sonst nicht ganz hinein */
+.kal-proud__btn { min-height: 44px; padding-left: 10px; padding-right: 10px; gap: 6px; white-space: normal; line-height: 1.15; text-align: center; }
+
+/* ---------- Eintragen ---------- */
+.kal-form { display: flex; flex-direction: column; gap: 12px; }
+.kal-form__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.kal-seg { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+.kal-seg__btn { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 6px 10px; text-align: left; }
+.kal-seg__ico .ico { width: 22px; height: 22px; }
+.kal-seg__txt { display: flex; flex-direction: column; line-height: 1.15; }
+.kal-seg__txt b { font-size: 0.95rem; letter-spacing: 0.03em; }
+.kal-seg__txt small { font-family: var(--font-body); font-size: 0.72rem; font-weight: 500; opacity: 0.85; }
+.kal-seg__btn--def.is-on { color: var(--lime); background: rgba(166, 255, 77, 0.1); box-shadow: inset 0 0 0 1px rgba(166, 255, 77, 0.5); }
+.kal-seg__btn--sur.is-on { color: var(--amber); background: rgba(255, 181, 61, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 181, 61, 0.5); }
+
+.kal-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.kal-chip { min-height: 44px; padding: 4px 16px; font-size: 0.9rem; }
+.kal-form__row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(150px, 0.8fr); gap: 10px; }
+.kal-date { min-width: 0; padding-right: 8px; font-family: var(--font-display); font-weight: 600; }
+/* iPhone: Datumsfeld sonst zu schmal/zentriert */
+@supports (-webkit-touch-callout: none) {
+  .kal-date { -webkit-appearance: none; appearance: none; text-align: left; display: flex; align-items: center; }
+}
+.kal-date::-webkit-calendar-picker-indicator { filter: invert(0.8) sepia(1) hue-rotate(120deg); cursor: pointer; }
+
+.kal-form__preview { font-size: 0.9rem; color: var(--text-dim); min-height: 1.4em; font-family: var(--font-display); font-weight: 600; }
+.kal-form__preview.is-ok { color: var(--lime); }
+.kal-form__preview.is-warn { color: var(--amber); }
+.kal-submit--sur { background: linear-gradient(180deg, #ffc86e, #e0901c); color: #2a1a00; box-shadow: 0 6px 22px rgba(255, 181, 61, 0.22); }
+.kal-form__hint { display: flex; gap: 8px; align-items: flex-start; font-size: 0.8rem; color: var(--text-faint); line-height: 1.4; }
+.kal-form__hint .ico { width: 16px; height: 16px; margin-top: 1px; color: var(--cyan); opacity: 0.7; }
+
+/* ---------- Tempo ---------- */
+.kal-stats { display: flex; flex-direction: column; gap: 10px; }
+.kal-stats .section-title { margin-top: 0; }
+.kal-stats__grid .stat__value { font-size: 1.25rem; }
+.kal-stats__grid .stat__label { font-size: 0.66rem; line-height: 1.3; }
+.kal-eta { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(4, 9, 14, 0.55); }
+.kal-eta__icon { flex: none; color: var(--text-dim); }
+.kal-eta__icon .ico { width: 24px; height: 24px; }
+.kal-eta__main { min-width: 0; }
+.kal-eta__text { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.02em; }
+.kal-eta--ok { border-color: rgba(166, 255, 77, 0.35); background: rgba(166, 255, 77, 0.05); }
+.kal-eta--ok .kal-eta__icon, .kal-eta--ok .kal-eta__text { color: var(--lime); }
+.kal-eta--warn { border-color: rgba(255, 181, 61, 0.35); background: rgba(255, 181, 61, 0.05); }
+.kal-eta--warn .kal-eta__icon, .kal-eta--warn .kal-eta__text { color: var(--amber); }
+
+/* ---------- Verlauf ---------- */
+.kal-hist { display: flex; flex-direction: column; gap: 10px; }
+.kal-days { display: flex; flex-direction: column; gap: 10px; }
+.kal-day { border: 1px solid var(--line); border-radius: var(--radius-sm); background: rgba(12, 21, 30, 0.7); overflow: hidden; }
+.kal-day__head {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px;
+  background: rgba(62, 230, 208, 0.05); border-bottom: 1px solid var(--line);
+  font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.kal-day__title { color: var(--text-dim); }
+.kal-day__sum { font-size: 0.92rem; letter-spacing: 0.02em; }
+.kal-day__list { list-style: none; margin: 0; padding: 0; }
+.kal-entry { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto 44px; align-items: center; gap: 10px; padding: 4px 2px 4px 12px; }
+.kal-entry + .kal-entry { border-top: 1px solid rgba(62, 230, 208, 0.08); }
+.kal-entry__icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; }
+.kal-entry__icon .ico { width: 17px; height: 17px; stroke-width: 2.2; }
+.kal-entry.is-def .kal-entry__icon { color: var(--lime); background: rgba(166, 255, 77, 0.1); }
+.kal-entry.is-sur .kal-entry__icon { color: var(--amber); background: rgba(255, 181, 61, 0.1); }
+.kal-entry__main { min-width: 0; }
+.kal-entry__title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kal-entry__amount { font-weight: 700; font-size: 1.05rem; white-space: nowrap; }
+.kal-entry.is-def .kal-entry__amount { color: var(--lime); }
+.kal-entry.is-sur .kal-entry__amount { color: var(--amber); }
+.kal-entry__del { color: var(--text-faint); }
+.kal-entry__del:hover { color: var(--red); }
+/* Trenner "Neues Ziel seit …": darüber zählt, darunter alte Einträge (blasser) */
+.kal-goalline { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0 2px; text-align: center; }
+.kal-goalline__label {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  font-family: var(--font-display); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+}
+.kal-goalline__label::before, .kal-goalline__label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(166, 255, 77, 0.55)); }
+.kal-goalline__label::after { background: linear-gradient(90deg, rgba(166, 255, 77, 0.55), transparent); }
+.kal-goalline__label .ico { width: 16px; height: 16px; }
+.kal-goalline__label b { white-space: nowrap; }
+.kal-day.is-old { opacity: 0.62; }
+.kal-hist__none { margin: 0; padding: 2px 2px 0; }
+.kal-empty { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: var(--radius-sm); border: 1px dashed var(--line-2); color: var(--text-dim); font-size: 0.9rem; }
+.kal-empty__icon { color: var(--cyan); opacity: 0.7; }
+.kal-empty__icon .ico { width: 28px; height: 28px; }
+
+/* ---------- Ersatz-Körper (SVG), falls kein Hologramm geladen ist ---------- */
+.kal-sil { position: absolute; inset: 8px 0 14px; width: 100%; height: calc(100% - 22px); overflow: visible; }
+.kal-sil__shell { fill: rgba(62, 230, 208, 0.07); }
+.kal-sil__outline { fill: #000; }
+.kal-sil__level { transition: transform 1.2s cubic-bezier(.2, .8, .2, 1); }
+.kal-sil__wave { animation: kalWave 3.4s linear infinite; }
+.kal-sil-box.is-empty .kal-sil__glow { flood-color: #a6ff4d; }
+.kal-sil-box.is-empty .kal-sil__shell { fill: rgba(166, 255, 77, 0.1); }
+.kal-sil.is-pulse { animation: kalPulse 0.7s ease-out; }
+@keyframes kalWave { from { transform: translateX(0); } to { transform: translateX(100px); } }
+@keyframes kalPulse { 0% { filter: brightness(1.8) drop-shadow(0 0 12px rgba(166, 255, 77, 0.8)); } 100% { filter: none; } }
+
+/* ---------- Ersteinrichtung ---------- */
+.screen__inner.kal--setup { max-width: 760px; display: flex; flex-direction: column; gap: 14px; }
+.kal-setup { display: flex; flex-direction: column; gap: 16px; padding: 16px; }
+.kal-setup__grid { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 14px; align-items: start; }
+.kal-holo--setup { height: 230px; }
+.kal-setup__main { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.kal-setup__title { font-size: 1.2rem; line-height: 1.2; }
+.kal-setup__preview { font-family: var(--font-display); font-weight: 600; color: var(--text-dim); font-size: 0.95rem; }
+.kal-setup__preview.is-on { color: #ffb53d; font-size: 1.1rem; }
+.kal-setup__preview b { font-size: 1.35rem; }
+.kal-setup .kal-chip { padding: 4px 11px; }
+.kal-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.kal-steps li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(4, 9, 14, 0.5); }
+.kal-steps li > b { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: rgba(62, 230, 208, 0.15); color: var(--cyan); font-family: var(--font-display); font-size: 0.8rem; }
+.kal-steps li > div { display: flex; flex-direction: column; font-size: 0.82rem; color: var(--text-dim); }
+.kal-steps strong { color: var(--text); font-family: var(--font-display); letter-spacing: 0.03em; font-size: 0.9rem; }
+
+@media (min-width: 640px) {
+  .kal-holo { height: 290px; }
+  .kal-setup__grid { grid-template-columns: 190px minmax(0, 1fr); gap: 20px; }
+  .kal-holo--setup { height: 300px; }
+  .kal-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .kal-setup { padding: 20px; }
+}
+
+/* Desktop: zwei Spalten (links Körper + Tempo, rechts Eintragen + Verlauf) */
+@media (min-width: 1000px) {
+  .kal-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .kal-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .kal-hero { grid-template-columns: minmax(150px, 42%) minmax(0, 1fr); padding: 16px; }
+  .kal-holo { height: 340px; }
+  .kal-big__num { font-size: 2.9rem; }
+}
+/* Handy quer (wenig Höhe): Körper kleiner */
+@media (max-height: 500px) {
+  .kal-holo, .kal-holo--setup { height: 210px; }
+  .gym-hero .gym-holo, .gym-live .gym-holo { height: 180px; }
+}
+
+/* genug Höhe: linke Spalte bleibt beim Scrollen im Verlauf stehen */
+@media (min-width: 1000px) and (min-height: 820px) {
+  .kal-col--a { position: sticky; top: 0; }
+}

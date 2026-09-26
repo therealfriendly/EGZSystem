@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "Operator",
+  "short_name": "Operator",
+  "description": "Operator – dein Labs Runner. Training, Kämpfe, Quests und Kalorienschulden als Spiel.",
+  "lang": "de",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#060a0f",
+  "theme_color": "#060a0f",
+  "categories": ["health", "fitness", "productivity", "games"],
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
