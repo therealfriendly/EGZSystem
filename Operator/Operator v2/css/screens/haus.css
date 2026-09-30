@@ -1,0 +1,552 @@
+/* Operator – Haus: Gym (.gym-…) und Kalorienschulden (.kal-…)
+   Handy zuerst (390 px), ab 1000/1100 px zwei Spalten. */
+
+/* ================= Gemeinsam ================= */
+.screen__inner.gym, .screen__inner.kal { max-width: 1080px; }
+
+.gym-kicker, .kal-kicker {
+  font-family: var(--font-display); font-weight: 700; font-size: 0.72rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan);
+}
+.kal-kicker--ok { color: var(--lime); }
+
+/* Bühne für den Hologramm-Körper (Labor-Scanner) */
+.gym-holo, .kal-holo {
+  position: relative; overflow: hidden; min-width: 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(70% 38% at 50% 100%, rgba(62, 230, 208, 0.16), transparent 70%),
+    radial-gradient(60% 50% at 50% 45%, rgba(62, 230, 208, 0.07), transparent 70%),
+    repeating-linear-gradient(180deg, rgba(62, 230, 208, 0.05) 0 1px, transparent 1px 14px),
+    rgba(4, 9, 14, 0.7);
+}
+.gym-holo:not(.holo)::after, .kal-holo:not(.holo)::after { /* Plattform unter dem Ersatz-Körper (das echte Hologramm zeichnet eine eigene) */
+  content: ''; position: absolute; left: 18%; right: 18%; bottom: 6px; height: 12px; pointer-events: none;
+  border-radius: 50%; border: 1px solid rgba(62, 230, 208, 0.45);
+  box-shadow: 0 0 16px rgba(62, 230, 208, 0.35), inset 0 0 10px rgba(62, 230, 208, 0.25);
+}
+
+/* ================= GYM ================= */
+.screen__inner.gym { display: flex; flex-direction: column; gap: 14px; }
+.gym-section { min-width: 0; }
+
+/* ---------- Umschalter Kraft | Ausdauer ---------- */
+.gym-seg { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+.gym-seg__btn {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 56px; padding: 6px 12px; text-align: left; min-width: 0;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.gym-seg__btn:hover { color: var(--text); }
+.gym-seg__ico { flex: none; display: inline-flex; }
+.gym-seg__ico .ico { width: 24px; height: 24px; }
+.gym-seg__txt { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.gym-seg__txt b { font-size: 1rem; letter-spacing: 0.07em; text-transform: uppercase; }
+.gym-seg__txt small { font-family: var(--font-body); font-size: 0.72rem; font-weight: 500; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gym-seg__btn.is-on { box-shadow: inset 0 0 0 1px var(--line-strong), 0 0 18px rgba(62, 230, 208, 0.12); }
+/* Punkt: hier läuft gerade ein Training / ein Timer */
+.gym-seg__dot { display: none; position: absolute; top: 8px; right: 9px; width: 9px; height: 9px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 10px rgba(166, 255, 77, 0.9); }
+.gym-seg__btn.is-live .gym-seg__dot { display: block; animation: pulse 1.3s ease-in-out infinite; }
+.gym-seg__btn.is-paused .gym-seg__dot { background: var(--amber); box-shadow: 0 0 10px rgba(255, 181, 61, 0.9); animation: none; }
+
+/* Kopf-Chip (laufender Timer / Trainingsdauer) */
+.gym-chip { color: var(--cyan); min-height: 34px; }
+.gym-chip__ico { display: inline-flex; }
+.gym-chip__txt { font-weight: 700; font-size: 0.9rem; letter-spacing: 0.04em; }
+.gym-chip--run { color: var(--lime); border-color: rgba(166, 255, 77, 0.55); background: rgba(166, 255, 77, 0.1); box-shadow: 0 0 14px rgba(166, 255, 77, 0.18); }
+.gym-chip--run .gym-chip__ico { animation: pulse 1.3s ease-in-out infinite; }
+.gym-chip--pause { color: var(--amber); border-color: rgba(255, 181, 61, 0.55); background: rgba(255, 181, 61, 0.1); }
+
+/* Zirkus-Sperre: die Sperr-Zeile oben zeigt der Rahmen (base.css .screen__lock); hier nur .gym-grp__locked statt der Start-Knöpfe */
+
+/* ---------- Kraft: Gruppe wählen ---------- */
+.gym-pick { display: flex; flex-direction: column; gap: 14px; }
+.gym-pick__main { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+.gym-hero { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 10px 14px; align-items: center; padding: 12px; }
+.gym-hero .gym-holo { height: 180px; }
+.gym-hero__text { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.gym-hero__title { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.gym-steps { grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.gym-steps li {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px 3px 3px; border-radius: 999px;
+  border: 1px solid var(--line); background: rgba(4, 9, 14, 0.5);
+  font-family: var(--font-display); font-weight: 600; font-size: 0.72rem; letter-spacing: 0.04em; color: var(--text-dim);
+}
+.gym-steps b { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: rgba(62, 230, 208, 0.16); color: var(--cyan); font-size: 0.68rem; }
+
+.gym-grps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.gym-grp { --grp: var(--cyan); display: flex; flex-direction: column; gap: 12px; transition: border-color 0.15s, box-shadow 0.2s; }
+.gym-grp::before, .gym-grp::after { border-color: var(--grp); }
+.gym-grp:hover { border-color: color-mix(in srgb, var(--grp) 40%, transparent); }
+.gym-grp.is-selected { border-color: color-mix(in srgb, var(--grp) 75%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--grp) 35%, transparent), 0 0 24px color-mix(in srgb, var(--grp) 16%, transparent); }
+.gym-grp.is-selected::before, .gym-grp.is-selected::after { opacity: 1; }
+
+.gym-grp__head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.gym-grp__icon {
+  flex: none; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 12px;
+  color: var(--grp); background: color-mix(in srgb, var(--grp) 13%, transparent);
+  border: 1px solid color-mix(in srgb, var(--grp) 45%, transparent);
+  box-shadow: inset 0 0 14px color-mix(in srgb, var(--grp) 14%, transparent);
+}
+.gym-grp__icon .ico { width: 27px; height: 27px; }
+.gym-grp__name { flex: 1; min-width: 0; }
+.gym-grp__name h3 { font-size: 1.25rem; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gym-grp__goal { flex: none; color: var(--lime); border-color: rgba(166, 255, 77, 0.35); }
+.gym-grp__text { line-height: 1.45; }
+.gym-grp > .btn:last-child, .gym-grp > .gym-grp__locked:last-child { margin-top: auto; }   /* Knöpfe nebeneinanderliegender Karten auf einer Höhe */
+.gym-grp__stat { color: var(--text-dim); }
+.gym-grp__stat b { color: var(--gold); font-size: 1.05rem; }
+.gym-grp__locked {
+  display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 6px 12px;
+  border-radius: var(--radius-sm); border: 1px dashed rgba(255, 181, 61, 0.55); background: rgba(255, 181, 61, 0.06);
+  color: var(--amber); font-family: var(--font-display); font-weight: 600; letter-spacing: 0.03em; text-align: center;
+}
+.gym-grp__locked .ico { width: 18px; height: 18px; }
+
+/* Muskeln einer Gruppe: Name + Rang | XP + Ziel heute */
+.gym-mlist { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); background: rgba(4, 9, 14, 0.45); }
+.gym-mrow { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 9px 12px; min-height: 52px; }
+.gym-mrow + .gym-mrow { border-top: 1px solid rgba(62, 230, 208, 0.08); }
+.gym-mrow__icon { display: inline-flex; color: var(--grp); }
+.gym-mrow__icon .ico { width: 21px; height: 21px; }
+.gym-mrow__main { display: flex; align-items: center; flex-wrap: wrap; gap: 3px 8px; min-width: 0; }
+.gym-mrow__name { font-family: var(--font-display); font-weight: 700; font-size: 0.92rem; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+.gym-mrow__vals { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; text-align: right; }
+.gym-mrow__xp { font-weight: 700; font-size: 1.08rem; white-space: nowrap; }
+.gym-mrow__goal { font-size: 0.76rem; font-weight: 600; color: var(--lime); white-space: nowrap; }
+
+.gym-grp--bauch .gym-grp__icon { color: var(--gold); background: rgba(233, 196, 106, 0.1); border-color: rgba(233, 196, 106, 0.4); box-shadow: none; }
+.gym-grp--bauch::before, .gym-grp--bauch::after { border-color: var(--gold); }
+.gym-grp--bauch.is-selected { border-color: rgba(233, 196, 106, 0.7); box-shadow: 0 0 0 1px rgba(233, 196, 106, 0.35), 0 0 22px rgba(233, 196, 106, 0.14); }
+
+/* Ersatz-Scanner, falls kein Hologramm geladen ist */
+.gym-scan { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.gym-scan__ring {
+  width: 70%; max-width: 150px; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%;
+  border: 1px dashed var(--line-strong); color: var(--cyan);
+  box-shadow: inset 0 0 30px rgba(62, 230, 208, 0.12), 0 0 20px rgba(62, 230, 208, 0.1);
+  animation: gymBreath 2.8s ease-in-out infinite;
+}
+.gym-scan__icon .ico { width: 54px; height: 54px; stroke-width: 1.5; filter: drop-shadow(0 0 8px rgba(62, 230, 208, 0.6)); }
+.gym-scan__label { font-family: var(--font-display); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); }
+.gym-scan.is-focus .gym-scan__label { color: var(--cyan); }
+.gym-scan.is-pulse .gym-scan__ring { animation: gymHit 0.5s ease-out, gymBreath 2.8s ease-in-out 0.5s infinite; }
+
+/* ---------- Kraft: Training läuft ---------- */
+.gym-session { display: flex; flex-direction: column; gap: 14px; }
+.gym-session__a, .gym-session__b { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+.gym-live { --grp: var(--cyan); display: flex; flex-direction: column; gap: 12px; transition: border-color 0.3s, box-shadow 0.3s; }
+.gym-live__head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.gym-live__name { flex: 1; min-width: 0; }
+.gym-live__title { font-size: 1.45rem; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gym-live__count { flex: none; font-size: 0.85rem; }
+.gym-live__count.is-some { color: var(--cyan); border-color: var(--line-strong); }
+.gym-live__grid { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; align-items: stretch; }
+.gym-live .gym-holo { height: auto; min-height: 196px; }
+.gym-live__parts { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.gym-live__hint { color: var(--text-dim); line-height: 1.4; }
+
+.gym-parts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.gym-part {
+  position: relative; display: flex; flex-direction: column; gap: 6px; width: 100%; min-height: 44px;
+  padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--line);
+  background: rgba(4, 9, 14, 0.55); color: var(--text); text-align: left; font: inherit;
+  transition: border-color 0.15s, box-shadow 0.2s, background 0.2s;
+}
+button.gym-part:hover { border-color: var(--line-2); }   /* Beine: nur eine Zeile, kein Knopf */
+.gym-part.is-selected { border-color: var(--line-strong); box-shadow: inset 3px 0 0 var(--cyan), 0 0 16px rgba(62, 230, 208, 0.1); }
+.gym-part__head { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.gym-part__icon { flex: none; display: inline-flex; color: var(--grp); }
+.gym-part__icon .ico { width: 19px; height: 19px; }
+.gym-part__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-display); font-weight: 700; font-size: 0.88rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.gym-part__check { display: none; flex: none; width: 18px; height: 18px; border-radius: 50%; place-items: center; background: var(--lime); color: #122400; }
+.gym-part__check .ico { width: 13px; height: 13px; stroke-width: 3; }
+.gym-part__val { margin-left: auto; padding-left: 6px; font-weight: 700; font-size: 1.2rem; line-height: 1; white-space: nowrap; transition: color 0.3s; }
+.gym-part .bar { height: 9px; }
+.gym-part__foot { display: flex; justify-content: space-between; gap: 8px; font-size: 0.74rem; color: var(--text-faint); }
+.gym-part__foot span { white-space: nowrap; }
+.gym-part__left { color: var(--text-dim); }
+.gym-part.is-reached { border-color: rgba(166, 255, 77, 0.4); background: rgba(166, 255, 77, 0.05); }
+.gym-part.is-reached.is-selected { border-color: rgba(166, 255, 77, 0.8); box-shadow: inset 3px 0 0 var(--lime), 0 0 16px rgba(166, 255, 77, 0.1); }
+.gym-part.is-reached .gym-part__check { display: inline-grid; }
+.gym-part.is-reached .gym-part__val, .gym-part.is-reached .gym-part__left { color: var(--lime); }
+
+.gym-live.is-reached { border-color: rgba(166, 255, 77, 0.5); box-shadow: 0 0 0 1px rgba(166, 255, 77, 0.3), 0 0 30px rgba(166, 255, 77, 0.12); }
+.gym-live.is-reached::before, .gym-live.is-reached::after { border-color: var(--lime); opacity: 0.9; }
+.gym-live.is-flash { animation: gymFlash 0.9s ease-out; }
+
+.gym-float {
+  position: absolute; right: 10px; top: -2px; pointer-events: none;
+  font-weight: 700; font-size: 1rem; color: var(--cyan); text-shadow: 0 0 10px rgba(62, 230, 208, 0.7);
+  animation: floatUp 1.05s ease-out forwards;
+}
+.gym-part.is-reached .gym-float { color: var(--lime); text-shadow: 0 0 10px rgba(166, 255, 77, 0.7); }
+
+/* Muskel-Auswahl der Satz-Eingabe: Muskel mit erreichtem Ziel in Grün (weitere Sätze zählen trotzdem) */
+.gym-session .set-entry__muscles .seg__btn.is-done { color: var(--lime); }
+.gym-session .set-entry__muscles .seg__btn.is-done.is-on { background: rgba(166, 255, 77, 0.1); box-shadow: inset 0 0 0 1px rgba(166, 255, 77, 0.5); }
+.gym-sets { display: flex; flex-direction: column; gap: 8px; }
+.gym-actions { display: flex; flex-direction: column; gap: 8px; }
+
+/* ---------- Ausdauer: Lauf-Timer ---------- */
+.gym-runs { display: flex; flex-direction: column; gap: 14px; }
+.gym-runs__intro { display: flex; align-items: center; gap: 12px; padding: 0 2px; }
+.gym-runs__icon { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 11px; color: var(--cyan); background: rgba(62, 230, 208, 0.1); border: 1px solid var(--line-2); }
+.gym-runs__icon .ico { width: 24px; height: 24px; }
+.gym-runs__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: start; }
+
+.gym-run { display: flex; flex-direction: column; gap: 12px; transition: border-color 0.3s, box-shadow 0.3s; scroll-margin-top: 8px; }
+.gym-run__head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.gym-run__icon { flex: none; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 12px; color: var(--cyan); background: rgba(62, 230, 208, 0.1); border: 1px solid var(--line-2); box-shadow: inset 0 0 14px rgba(62, 230, 208, 0.1); }
+.gym-run__icon .ico { width: 27px; height: 27px; }
+.gym-run__name { flex: 1; min-width: 0; }
+.gym-run__name h3 { font-size: 1.12rem; text-transform: uppercase; letter-spacing: 0.06em; line-height: 1.2; }
+.gym-run__name p { margin-top: 2px; line-height: 1.35; }
+.gym-run__state { flex: none; text-transform: uppercase; letter-spacing: 0.1em; }
+.gym-run__state.is-running { color: var(--lime); border-color: rgba(166, 255, 77, 0.55); background: rgba(166, 255, 77, 0.1); }
+.gym-run__state.is-paused, .gym-run__state.is-stale { color: var(--amber); border-color: rgba(255, 181, 61, 0.55); background: rgba(255, 181, 61, 0.1); }
+.gym-run__led { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 8px var(--lime); animation: pulse 1.1s ease-in-out infinite; }
+
+.gym-run__tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.gym-run__stat { min-width: 0; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(4, 9, 14, 0.5); }
+.gym-run__stat-label { display: block; font-family: var(--font-display); font-weight: 600; font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gym-run__stat-val { display: block; margin-top: 2px; font-size: 1.02rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gym-run__stat.is-main { border-color: rgba(166, 255, 77, 0.35); background: rgba(166, 255, 77, 0.05); }
+.gym-run__stat.is-main .gym-run__stat-val { color: var(--lime); }
+.gym-run__first { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px dashed var(--line-strong); background: rgba(62, 230, 208, 0.05); color: var(--cyan); font-weight: 600; font-size: 0.9rem; line-height: 1.35; }
+.gym-run__first .ico { width: 20px; height: 20px; flex: none; }
+
+/* Große Uhr: mm:ss + Minuten mit 2 Nachkommastellen */
+.gym-timer {
+  position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; gap: 7px;
+  padding: 16px 14px 14px; border-radius: var(--radius-sm); border: 1px solid var(--line); text-align: center;
+  background:
+    radial-gradient(80% 70% at 50% 0%, rgba(62, 230, 208, 0.09), transparent 70%),
+    repeating-linear-gradient(180deg, rgba(62, 230, 208, 0.04) 0 1px, transparent 1px 6px),
+    rgba(4, 9, 14, 0.72);
+}
+.gym-timer__clock { font-size: clamp(3.1rem, 17vw, 4.6rem); font-weight: 700; line-height: 1; letter-spacing: 0.03em; color: var(--text-faint); transition: color 0.3s, text-shadow 0.3s; }
+.gym-timer__min { font-size: 1.2rem; font-weight: 700; color: var(--text-dim); letter-spacing: 0.02em; }
+.gym-timer .bar { width: 100%; margin-top: 2px; }
+.gym-timer__sub { color: var(--text-dim); line-height: 1.35; max-width: 420px; }
+.gym-run.is-running .gym-timer__clock { color: var(--cyan); text-shadow: 0 0 26px rgba(62, 230, 208, 0.55); }
+.gym-run.is-running .gym-timer__min { color: var(--text); }
+.gym-run.is-paused .gym-timer__clock { color: var(--amber); text-shadow: 0 0 22px rgba(255, 181, 61, 0.4); }
+/* Timer vergessen (über 24 h): gelb, ohne Leuchten – diese Zeit zählt nicht */
+.gym-run.is-stale .gym-timer__clock { color: var(--amber); opacity: 0.75; }
+.gym-run.is-stale .gym-timer__min { color: var(--text-faint); text-decoration: line-through; text-decoration-color: rgba(255, 181, 61, 0.6); }
+.gym-run.is-goal .gym-timer__clock { color: var(--lime); text-shadow: 0 0 26px rgba(166, 255, 77, 0.55); }
+/* Scan-Linie, solange der Timer läuft */
+.gym-run.is-running .gym-timer::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 40%; pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(62, 230, 208, 0.1) 70%, rgba(62, 230, 208, 0.28) 100%);
+  border-bottom: 1px solid rgba(62, 230, 208, 0.45);
+  animation: gymScanLine 2.6s linear infinite;
+}
+.gym-run.is-goal.is-running .gym-timer::after { background: linear-gradient(180deg, transparent, rgba(166, 255, 77, 0.1) 70%, rgba(166, 255, 77, 0.25) 100%); border-bottom-color: rgba(166, 255, 77, 0.5); }
+@media (prefers-reduced-motion: reduce) {
+  .gym-run.is-running .gym-timer::after { display: none; }
+}
+
+.gym-run.is-running { border-color: rgba(62, 230, 208, 0.6); box-shadow: var(--glow), 0 0 40px rgba(62, 230, 208, 0.12); }
+.gym-run.is-running::before, .gym-run.is-running::after { opacity: 1; }
+.gym-run.is-paused, .gym-run.is-stale { border-color: rgba(255, 181, 61, 0.55); box-shadow: 0 0 0 1px rgba(255, 181, 61, 0.25), 0 0 30px rgba(255, 181, 61, 0.1); }
+.gym-run.is-paused::before, .gym-run.is-paused::after, .gym-run.is-stale::before, .gym-run.is-stale::after { border-color: var(--amber); opacity: 1; }
+.gym-run.is-other .gym-timer { opacity: 0.55; }
+.gym-run.is-goal { border-color: rgba(166, 255, 77, 0.6); box-shadow: 0 0 0 1px rgba(166, 255, 77, 0.3), 0 0 36px rgba(166, 255, 77, 0.14); }
+.gym-run.is-goal::before, .gym-run.is-goal::after { border-color: var(--lime); }
+
+.gym-run__controls { display: flex; flex-direction: column; gap: 8px; }
+.gym-run__pair { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 8px; }
+.gym-run__pair .btn { min-width: 0; padding-left: 10px; padding-right: 10px; }
+.gym-run__small { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px 12px; text-align: center; }
+.gym-run__small .btn--sm { min-height: 44px; }
+.gym-run__busy { display: inline-flex; align-items: center; gap: 6px; color: var(--amber); font-weight: 600; }
+.gym-run__busy .ico { width: 17px; height: 17px; }
+.gym-run__info { display: flex; gap: 8px; align-items: flex-start; font-size: 0.8rem; color: var(--text-faint); line-height: 1.45; }
+.gym-run__info .ico { width: 16px; height: 16px; margin-top: 2px; color: var(--cyan); opacity: 0.75; flex: none; }
+.gym-manual__row { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 10px; }
+.gym-manual__preview { font-weight: 600; color: var(--text-dim); min-height: 1.4em; }
+/* Ton-Farben (base.css .tone-*) gegen die eigene Grundfarbe dieser Texte durchsetzen (haus.css lädt später) */
+.gym-live__hint.tone-ok, .gym-timer__sub.tone-ok, .gym-manual__preview.tone-ok { color: var(--lime); }
+.gym-timer__sub.tone-warn, .gym-manual__preview.tone-warn { color: var(--amber); }
+
+@keyframes gymBreath { 0%, 100% { transform: scale(1); opacity: 0.85; } 50% { transform: scale(1.04); opacity: 1; } }
+@keyframes gymHit { 0% { transform: scale(1.18); box-shadow: 0 0 40px rgba(62, 230, 208, 0.6); } 100% { transform: scale(1); } }
+@keyframes gymFlash { 0% { box-shadow: 0 0 0 2px var(--lime), 0 0 60px rgba(166, 255, 77, 0.55); } 100% { box-shadow: 0 0 0 1px rgba(166, 255, 77, 0.3), 0 0 30px rgba(166, 255, 77, 0.12); } }
+@keyframes gymScanLine { from { transform: translateY(-100%); } to { transform: translateY(250%); } }
+
+/* etwas breiter: Karten nebeneinander */
+@media (min-width: 640px) {
+  .gym-seg { max-width: 600px; }
+  .gym-grps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gym-hero { grid-template-columns: 160px minmax(0, 1fr); }
+  .gym-hero .gym-holo { height: 220px; }
+  .gym-live__grid { grid-template-columns: 150px minmax(0, 1fr); }
+  .gym-live .gym-holo { min-height: 230px; }
+}
+/* Lauf-Timer nebeneinander, sobald Platz ist (auch Handy quer) */
+@media (min-width: 760px) {
+  .gym-runs__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* schmale Handys: Muskel-Auswahl der Satz-Eingabe ohne Icons, damit "Schultern" ganz hineinpasst */
+@media (max-width: 400px) {
+  .gym-session .set-entry__muscles .seg__btn .ico { display: none; }
+}
+/* wenig Höhe (Handy quer): kompakter */
+@media (max-height: 500px) {
+  .gym-runs__intro { display: none; }
+  .gym-seg__btn { min-height: 48px; }
+  .gym-timer { padding: 10px 12px; }
+}
+
+/* Desktop: zwei Spalten */
+@media (min-width: 1100px) {
+  .gym-pick { display: grid; grid-template-columns: 300px minmax(0, 1fr); align-items: start; gap: 18px; }
+  .gym-hero { position: sticky; top: 0; grid-template-columns: minmax(0, 1fr); padding: 14px; }
+  .gym-hero .gym-holo { height: 330px; }
+  .gym-session { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; gap: 18px; }
+  .gym-session__a { position: sticky; top: 0; }
+  .gym-live__grid { grid-template-columns: minmax(0, 1fr); }
+  .gym-live .gym-holo { min-height: 0; height: 250px; }
+}
+
+/* ================= KALORIEN ================= */
+
+.kal-layout { display: flex; flex-direction: column; gap: 14px; }
+/* Handy: Spalten auflösen, damit die Reihenfolge Kopf → Simuliertes Gewicht → Eintragen → Tempo → Verlauf ist */
+.kal-col { display: contents; }
+.kal-hero { order: 1; }
+.kal-sim { order: 2; }
+.kal-form { order: 3; }
+.kal-stats { order: 4; }
+.kal-hist { order: 5; }
+
+/* ---------- Kopf: Körper + Restschuld ---------- */
+.kal-hero { display: grid; grid-template-columns: minmax(112px, 38%) minmax(0, 1fr); gap: 14px; align-items: center; padding: 12px; }
+.kal-hero__body { min-width: 0; }
+.kal-holo { height: 250px; }
+.kal-hero__info { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.kal-big { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 6px; }
+.kal-big__num {
+  font-size: clamp(2rem, 9.4vw, 3.4rem); font-weight: 700; line-height: 1; letter-spacing: 0;
+  color: #ffb53d; text-shadow: 0 0 24px rgba(255, 122, 47, 0.4);
+}
+.kal-big__unit { font-family: var(--font-display); font-weight: 700; color: var(--text-dim); font-size: 1rem; }
+.kal-hero__sub { color: var(--text-dim); font-size: 0.9rem; }
+.kal-hero__sub b { color: var(--text); }
+.kal-dot { margin: 0 6px; color: var(--text-faint); }
+.kal-hero__paid { font-size: 0.88rem; color: var(--text-dim); }
+.kal-hero__paid .num { font-weight: 700; }
+.kal-hero__goal { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px 10px; padding-top: 8px; border-top: 1px solid var(--line); }
+.kal-hero__goal-text { font-size: 0.8rem; color: var(--text-faint); }
+.kal-hero__goal .btn { min-height: 44px; }   /* Tipp-Fläche mind. 44 px */
+
+/* ---------- ICH BIN GESUND! ---------- */
+.kal-hero.is-done { border-color: rgba(166, 255, 77, 0.5); box-shadow: 0 0 0 1px rgba(166, 255, 77, 0.25), 0 0 40px rgba(166, 255, 77, 0.14); }
+.kal-hero.is-done::before, .kal-hero.is-done::after { border-color: var(--lime); opacity: 0.9; }
+.kal-hero.is-done .kal-holo { background-color: rgba(8, 20, 8, 0.6); }
+.kal-proud__icon { color: var(--gold); filter: drop-shadow(0 0 14px rgba(233, 196, 106, 0.65)); animation: pop 0.6s ease-out both; }
+.kal-proud__icon .ico { width: 52px; height: 52px; stroke-width: 1.5; }
+.kal-proud__title {
+  font-size: clamp(1.55rem, 7.2vw, 2.4rem); line-height: 1.05; letter-spacing: 0.03em;
+  color: var(--lime); text-shadow: 0 0 24px rgba(166, 255, 77, 0.5);
+}
+.kal-proud__text { font-weight: 600; }
+/* schmale Handys (360 px): Knopf-Text passt sonst nicht ganz hinein */
+.kal-proud__btn { min-height: 44px; padding-left: 10px; padding-right: 10px; gap: 6px; white-space: normal; line-height: 1.15; text-align: center; }
+
+/* ---------- Simuliertes Gewicht (Startgewicht − bezahlte kcal / 7.700) ---------- */
+.kal-sim { display: flex; flex-direction: column; gap: 12px; }
+.kal-sim__head { display: flex; align-items: center; gap: 8px; }
+.kal-sim__icon { display: inline-flex; color: var(--cyan); }
+.kal-sim__icon .ico { width: 20px; height: 20px; }
+.kal-sim__main { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 6px 14px; }
+.kal-sim__big { display: flex; align-items: baseline; gap: 7px; min-width: 0; }
+.kal-sim__num { font-size: clamp(2.3rem, 11vw, 3.2rem); font-weight: 700; line-height: 1; letter-spacing: 0.01em; color: var(--text); text-shadow: 0 0 24px rgba(62, 230, 208, 0.35); }
+.kal-sim__unit { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--cyan); }
+.kal-sim__paidbox { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.kal-sim__paid { font-size: 1.2rem; font-weight: 700; color: var(--lime); white-space: nowrap; line-height: 1.1; }
+.kal-sim__paid.is-warn { color: var(--amber); }
+.kal-sim__paid-label { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+/* Weg vom Start- zum Zielgewicht, Punkt = simuliertes Gewicht */
+.kal-sim__track { position: relative; height: 10px; margin: 6px 9px 0; border-radius: 99px; background: rgba(4, 9, 14, 0.8); border: 1px solid var(--line); }
+.kal-sim__fill { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; background: linear-gradient(90deg, rgba(62, 230, 208, 0.2), rgba(62, 230, 208, 0.75)); transition: width 0.6s cubic-bezier(.2, .8, .2, 1); }
+.kal-sim__marker { position: absolute; top: 50%; left: 0; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 0 3px #08111a, 0 0 14px rgba(62, 230, 208, 0.85); transition: left 0.6s cubic-bezier(.2, .8, .2, 1); }
+.kal-sim.is-done .kal-sim__fill { background: linear-gradient(90deg, rgba(166, 255, 77, 0.25), rgba(166, 255, 77, 0.8)); }
+.kal-sim.is-done .kal-sim__marker { background: var(--lime); box-shadow: 0 0 0 3px #08111a, 0 0 14px rgba(166, 255, 77, 0.85); }
+.kal-sim__ends { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.kal-sim__end { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.kal-sim__end--goal { align-items: flex-end; text-align: right; }
+.kal-sim__label { font-family: var(--font-display); font-weight: 600; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
+.kal-sim__endval { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; }
+.kal-sim__end b { font-size: 1.05rem; white-space: nowrap; }
+.kal-sim__end--goal b { color: var(--lime); }
+.kal-sim__edit { font-size: 0.72rem; }
+.kal-sim__cmp { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(4, 9, 14, 0.5); }
+.kal-sim__cmp:empty { display: none; }
+.kal-sim__cmp.is-over { border-color: rgba(255, 181, 61, 0.35); }
+.kal-sim__diff { color: var(--text-dim); line-height: 1.4; }
+.kal-sim__diff b { color: var(--text); white-space: nowrap; }
+.kal-sim__cmp.is-over .kal-sim__delta { color: var(--amber); }
+.kal-sim__cmp.is-under .kal-sim__delta { color: var(--lime); }
+.kal-sim__same { display: flex; align-items: center; gap: 6px; color: var(--lime); }
+.kal-sim__same .ico { width: 16px; height: 16px; }
+.kal-sim__take { min-height: 44px; }
+.kal-sim__why { display: flex; gap: 8px; align-items: flex-start; font-size: 0.8rem; color: var(--text-faint); line-height: 1.45; }
+.kal-sim__why .ico { width: 16px; height: 16px; margin-top: 2px; color: var(--cyan); opacity: 0.75; flex: none; }
+
+/* Ziel + Startgewicht nebeneinander (Ersteinrichtung und "Neues Ziel") */
+.kal-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: end; }
+.kal-weightline { font-family: var(--font-display); font-weight: 600; font-size: 0.92rem; color: var(--text-dim); line-height: 1.35; }
+.kal-weightline b { color: var(--text); white-space: nowrap; }
+.kal-weightline b.tone-ok { color: var(--lime); }
+.kal-weightline.is-warn, .kal-weightline.is-warn b { color: var(--amber); }
+.kal-sw-hint { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; }
+.kal-sw-hint b { color: var(--text); }
+
+/* ---------- Eintragen ---------- */
+.kal-form { display: flex; flex-direction: column; gap: 12px; }
+.kal-form__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.kal-seg { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+.kal-seg__btn { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 6px 10px; text-align: left; }
+.kal-seg__ico .ico { width: 22px; height: 22px; }
+.kal-seg__txt { display: flex; flex-direction: column; line-height: 1.15; }
+.kal-seg__txt b { font-size: 0.95rem; letter-spacing: 0.03em; }
+.kal-seg__txt small { font-family: var(--font-body); font-size: 0.72rem; font-weight: 500; opacity: 0.85; }
+.kal-seg__btn--def.is-on { color: var(--lime); background: rgba(166, 255, 77, 0.1); box-shadow: inset 0 0 0 1px rgba(166, 255, 77, 0.5); }
+.kal-seg__btn--sur.is-on { color: var(--amber); background: rgba(255, 181, 61, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 181, 61, 0.5); }
+
+.kal-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.kal-chip { min-height: 44px; padding: 4px 16px; font-size: 0.9rem; }
+.kal-form__row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(150px, 0.8fr); gap: 10px; }
+.kal-date { min-width: 0; padding-right: 8px; font-family: var(--font-display); font-weight: 600; }
+/* iPhone: Datumsfeld sonst zu schmal/zentriert */
+@supports (-webkit-touch-callout: none) {
+  .kal-date { -webkit-appearance: none; appearance: none; text-align: left; display: flex; align-items: center; }
+}
+.kal-date::-webkit-calendar-picker-indicator { filter: invert(0.8) sepia(1) hue-rotate(120deg); cursor: pointer; }
+
+.kal-form__preview { font-size: 0.9rem; color: var(--text-dim); min-height: 1.4em; font-family: var(--font-display); font-weight: 600; }
+.kal-form__preview.is-ok { color: var(--lime); }
+.kal-form__preview.is-warn { color: var(--amber); }
+.kal-submit--sur { background: linear-gradient(180deg, #ffc86e, #e0901c); color: #2a1a00; box-shadow: 0 6px 22px rgba(255, 181, 61, 0.22); }
+.kal-form__hint { display: flex; gap: 8px; align-items: flex-start; font-size: 0.8rem; color: var(--text-faint); line-height: 1.4; }
+.kal-form__hint .ico { width: 16px; height: 16px; margin-top: 1px; color: var(--cyan); opacity: 0.7; }
+
+/* ---------- Tempo ---------- */
+.kal-stats { display: flex; flex-direction: column; gap: 10px; }
+.kal-stats .section-title { margin-top: 0; }
+.kal-stats__grid .stat__value { font-size: 1.25rem; }
+.kal-stats__grid .stat__label { font-size: 0.66rem; line-height: 1.3; }
+.kal-eta { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(4, 9, 14, 0.55); }
+.kal-eta__icon { flex: none; color: var(--text-dim); }
+.kal-eta__icon .ico { width: 24px; height: 24px; }
+.kal-eta__main { min-width: 0; }
+.kal-eta__text { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.02em; }
+.kal-eta--ok { border-color: rgba(166, 255, 77, 0.35); background: rgba(166, 255, 77, 0.05); }
+.kal-eta--ok .kal-eta__icon, .kal-eta--ok .kal-eta__text { color: var(--lime); }
+.kal-eta--warn { border-color: rgba(255, 181, 61, 0.35); background: rgba(255, 181, 61, 0.05); }
+.kal-eta--warn .kal-eta__icon, .kal-eta--warn .kal-eta__text { color: var(--amber); }
+
+/* ---------- Verlauf ---------- */
+.kal-hist { display: flex; flex-direction: column; gap: 10px; }
+.kal-days { display: flex; flex-direction: column; gap: 10px; }
+.kal-day { border: 1px solid var(--line); border-radius: var(--radius-sm); background: rgba(12, 21, 30, 0.7); overflow: hidden; }
+.kal-day__head {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px;
+  background: rgba(62, 230, 208, 0.05); border-bottom: 1px solid var(--line);
+  font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.kal-day__title { color: var(--text-dim); }
+.kal-day__sum { font-size: 0.92rem; letter-spacing: 0.02em; }
+.kal-day__list { list-style: none; margin: 0; padding: 0; }
+.kal-entry { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto 44px; align-items: center; gap: 10px; padding: 4px 2px 4px 12px; }
+.kal-entry + .kal-entry { border-top: 1px solid rgba(62, 230, 208, 0.08); }
+.kal-entry__icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; }
+.kal-entry__icon .ico { width: 17px; height: 17px; stroke-width: 2.2; }
+.kal-entry.is-def .kal-entry__icon { color: var(--lime); background: rgba(166, 255, 77, 0.1); }
+.kal-entry.is-sur .kal-entry__icon { color: var(--amber); background: rgba(255, 181, 61, 0.1); }
+.kal-entry__main { min-width: 0; }
+.kal-entry__title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kal-entry__amount { font-weight: 700; font-size: 1.05rem; white-space: nowrap; }
+.kal-entry.is-def .kal-entry__amount { color: var(--lime); }
+.kal-entry.is-sur .kal-entry__amount { color: var(--amber); }
+.kal-entry__del { color: var(--text-faint); }
+.kal-entry__del:hover { color: var(--red); }
+/* Trenner "Neues Ziel seit …": darüber zählt, darunter alte Einträge (blasser) */
+.kal-goalline { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0 2px; text-align: center; }
+.kal-goalline__label {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  font-family: var(--font-display); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+}
+.kal-goalline__label::before, .kal-goalline__label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(166, 255, 77, 0.55)); }
+.kal-goalline__label::after { background: linear-gradient(90deg, rgba(166, 255, 77, 0.55), transparent); }
+.kal-goalline__label .ico { width: 16px; height: 16px; }
+.kal-goalline__label b { white-space: nowrap; }
+.kal-day.is-old { opacity: 0.62; }
+.kal-hist__none { margin: 0; padding: 2px 2px 0; }
+.kal-empty { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: var(--radius-sm); border: 1px dashed var(--line-2); color: var(--text-dim); font-size: 0.9rem; }
+.kal-empty__icon { color: var(--cyan); opacity: 0.7; }
+.kal-empty__icon .ico { width: 28px; height: 28px; }
+
+/* ---------- Ersatz-Körper (SVG), falls kein Hologramm geladen ist ---------- */
+.kal-sil { position: absolute; inset: 8px 0 14px; width: 100%; height: calc(100% - 22px); overflow: visible; }
+.kal-sil__shell { fill: rgba(62, 230, 208, 0.07); }
+.kal-sil__outline { fill: #000; }
+.kal-sil__level { transition: transform 1.2s cubic-bezier(.2, .8, .2, 1); }
+.kal-sil__wave { animation: kalWave 3.4s linear infinite; }
+.kal-sil-box.is-empty .kal-sil__glow { flood-color: #a6ff4d; }
+.kal-sil-box.is-empty .kal-sil__shell { fill: rgba(166, 255, 77, 0.1); }
+.kal-sil.is-pulse { animation: kalPulse 0.7s ease-out; }
+@keyframes kalWave { from { transform: translateX(0); } to { transform: translateX(100px); } }
+@keyframes kalPulse { 0% { filter: brightness(1.8) drop-shadow(0 0 12px rgba(166, 255, 77, 0.8)); } 100% { filter: none; } }
+
+/* ---------- Ersteinrichtung ---------- */
+.screen__inner.kal--setup { max-width: 760px; display: flex; flex-direction: column; gap: 14px; }
+.kal-setup { display: flex; flex-direction: column; gap: 16px; padding: 16px; }
+.kal-setup__grid { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 14px; align-items: start; }
+.kal-holo--setup { height: 230px; }
+.kal-setup__main { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.kal-setup__title { font-size: 1.2rem; line-height: 1.2; }
+.kal-setup__preview { font-family: var(--font-display); font-weight: 600; color: var(--text-dim); font-size: 0.95rem; }
+.kal-setup__preview.is-on { color: #ffb53d; font-size: 1.1rem; }
+.kal-setup__preview b { font-size: 1.35rem; }
+.kal-setup .kal-chip { padding: 4px 11px; }
+.kal-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.kal-steps li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(4, 9, 14, 0.5); }
+.kal-steps li > b { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: rgba(62, 230, 208, 0.15); color: var(--cyan); font-family: var(--font-display); font-size: 0.8rem; }
+.kal-steps li > div { display: flex; flex-direction: column; font-size: 0.82rem; color: var(--text-dim); }
+.kal-steps strong { color: var(--text); font-family: var(--font-display); letter-spacing: 0.03em; font-size: 0.9rem; }
+
+@media (min-width: 640px) {
+  .kal-holo { height: 290px; }
+  .kal-setup__grid { grid-template-columns: 190px minmax(0, 1fr); gap: 20px; }
+  .kal-holo--setup { height: 300px; }
+  .kal-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .kal-setup { padding: 20px; }
+}
+
+/* Desktop: zwei Spalten (links Körper + simuliertes Gewicht + Tempo, rechts Eintragen + Verlauf) */
+@media (min-width: 1000px) {
+  .kal-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .kal-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .kal-hero { grid-template-columns: minmax(150px, 42%) minmax(0, 1fr); padding: 16px; }
+  .kal-holo { height: 340px; }
+  .kal-big__num { font-size: 2.9rem; }
+}
+/* Handy quer (wenig Höhe): Körper kleiner */
+@media (max-height: 500px) {
+  .kal-holo, .kal-holo--setup { height: 210px; }
+  .gym-hero .gym-holo { height: 180px; }
+  .gym-live .gym-holo { min-height: 180px; }
+  .gym-timer__clock { font-size: 3rem; }
+}
+
+/* sehr viel Höhe: linke Spalte bleibt beim Scrollen im Verlauf stehen (nur wenn sie ganz hineinpasst) */
+@media (min-width: 1000px) and (min-height: 1100px) {
+  .kal-col--a { position: sticky; top: 0; }
+}

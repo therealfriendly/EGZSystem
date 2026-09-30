@@ -1,0 +1,682 @@
+/* Operator – Arena und Kampf (Version 2)
+   Arena: Kolosseum-Labor mit Alarm-Rot und Gold. Kampf: Gegner-Bühne, Monster-HP je Muskel,
+   eigene Spieler-HP, Schlagabtausch, Satz-Eingabe.
+   Klassen: .arena-… (Bildschirm 'arena') und .kampf-… (Bildschirm 'kampf'). */
+
+/* Icon-Hülle (Icons kommen als SVG-String) */
+.arena-i, .kampf-i { display: inline-flex; align-items: center; justify-content: center; flex: none; }
+
+/* Gruppen-Chip (Push / Pull / Beine): gemeinsamer Stil .chip--group aus base.css (wie in der Taverne) */
+
+/* ============================================================
+   ARENA
+   ============================================================ */
+
+.arena { display: flex; flex-direction: column; gap: 16px; }
+
+/* ---------- Kopf: Arena-Meister ---------- */
+.arena-hero {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 16px;
+  padding: 22px 16px 40px; overflow: hidden;
+  border-color: rgba(255, 61, 87, 0.42);
+  background:
+    radial-gradient(90% 120% at 0% 0%, rgba(255, 61, 87, 0.26), transparent 60%),
+    radial-gradient(70% 120% at 100% 100%, rgba(233, 196, 106, 0.16), transparent 62%),
+    linear-gradient(180deg, rgba(42, 12, 20, 0.92), rgba(12, 15, 22, 0.95));
+  box-shadow: 0 0 34px rgba(255, 61, 87, 0.12);
+}
+/* Kolosseum-Bögen (leuchtende Fenster) + Goldkante am unteren Rand */
+.arena-hero__deco {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(233, 196, 106, 0.4), transparent) 0 calc(100% - 26px) / 100% 1px no-repeat,
+    radial-gradient(ellipse 10px 14px at 50% 100%, rgba(255, 61, 87, 0.34) 0 58%, rgba(255, 61, 87, 0.08) 62%, transparent 72%) 0 100% / 32px 22px repeat-x;
+  opacity: 0.6;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 30%, #000 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 30%, #000 100%);
+}
+/* Warnstreifen oben */
+.arena-hero__stripes {
+  position: absolute; left: 0; right: 0; top: 0; height: 5px; pointer-events: none;
+  background: repeating-linear-gradient(135deg, rgba(255, 61, 87, 0.85) 0 9px, rgba(20, 6, 10, 0.9) 9px 18px);
+  opacity: 0.8;
+}
+
+/* Porträt im goldenen Achteck-Rahmen */
+.arena-npc { position: relative; width: 92px; height: 92px; margin-bottom: 6px; align-self: start; }
+.arena-npc__frame, .arena-npc__inner {
+  position: absolute;
+  clip-path: polygon(29% 0, 71% 0, 100% 29%, 100% 71%, 71% 100%, 29% 100%, 0 71%, 0 29%);
+}
+.arena-npc__frame { inset: 0; background: linear-gradient(140deg, #fbe3a0, #9a7327 45%, #f2cf78 70%, #7a5a1c); box-shadow: 0 0 24px rgba(255, 61, 87, 0.4); }
+.arena-npc__inner {
+  inset: 3px; display: grid; place-items: center; color: var(--gold);
+  background: radial-gradient(circle at 50% 38%, rgba(255, 61, 87, 0.55), rgba(40, 8, 14, 0.95) 62%, #12060a 100%);
+}
+.arena-npc__inner .ico { width: 50px; height: 50px; stroke-width: 1.5; filter: drop-shadow(0 0 10px rgba(255, 61, 87, 0.8)); }
+.arena-npc__inner--img img { width: 100%; height: 100%; object-fit: cover; }
+.arena-npc__plate {
+  position: absolute; left: 50%; bottom: -11px; transform: translateX(-50%);
+  padding: 2px 10px; border-radius: 4px;
+  background: linear-gradient(180deg, #f5d47e, #b8913a); color: #2a1c02;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+.arena-hero__text { position: relative; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.arena-hero__kicker { font-family: var(--font-display); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+.arena-hero__quote { font-family: var(--font-display); font-weight: 600; font-size: 1.12rem; line-height: 1.25; color: #fff; text-shadow: 0 0 18px rgba(255, 61, 87, 0.45); }
+.arena-hero__sub { font-size: 0.85rem; color: var(--text-dim); }
+.arena-hero__chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+
+/* ---------- Laufender Kampf ---------- */
+.arena-live {
+  display: flex; flex-direction: column; gap: 10px;
+  border-color: rgba(255, 61, 87, 0.6);
+  background: linear-gradient(180deg, rgba(60, 12, 22, 0.8), rgba(14, 14, 22, 0.92));
+  box-shadow: 0 0 26px rgba(255, 61, 87, 0.18);
+}
+.arena-live__top { display: flex; align-items: center; gap: 10px; }
+.arena-live__top .chip { margin-left: auto; }
+.arena-live__bar .bar__label { font-size: 0.8rem; }
+.arena-live__bar--me { height: 22px; }
+.arena-live__bar--me .bar__label { font-size: 0.78rem; }
+.arena-live__btn { width: 100%; }
+@media (min-width: 700px) {
+  .arena-live { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 20px; row-gap: 8px; align-items: center; }
+  .arena-live > :not(.arena-live__btn) { grid-column: 1; }
+  .arena-live__btn { grid-column: 2; grid-row: 1 / span 5; width: auto; min-width: 230px; }
+}
+.arena-live__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 0 rgba(255, 61, 87, 0.7); animation: arenaDot 1.3s ease-out infinite; flex: none; }
+.arena-live__kicker { font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: #ff8a9a; }
+.arena-live__name { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; line-height: 1.15; }
+.arena-live__meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; color: var(--text-dim); font-size: 0.88rem; }
+@keyframes arenaDot { 0% { box-shadow: 0 0 0 0 rgba(255, 61, 87, 0.7); } 100% { box-shadow: 0 0 0 12px rgba(255, 61, 87, 0); } }
+
+/* ---------- Statistik ---------- */
+.arena-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.arena-stats .stat { border-color: rgba(255, 61, 87, 0.22); background: linear-gradient(180deg, rgba(34, 14, 20, 0.7), rgba(12, 16, 24, 0.8)); padding: 12px 10px; }
+.arena-stats .stat__icon { color: var(--red); }
+.arena-stats .stat.tone-gold .stat__icon { color: var(--gold); }
+.arena-stats .stat__label { font-size: 0.68rem; letter-spacing: 0.06em; }
+.arena-stats .stat__value { font-size: 1.6rem; }
+
+/* ---------- Angebote ---------- */
+.arena-offers { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+/* 3 Spalten nur, wenn jede Karte genug Platz hat (900–1099 px: Bildschirm ist ein Panel neben der Leiste) */
+@media (min-width: 820px) and (max-width: 899px), (min-width: 1100px) {
+  .arena-offers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .arena-offer__skip { font-size: 0.82rem; padding: 0 12px; }
+}
+.arena-offer {
+  --diff: var(--red);
+  display: flex; flex-direction: column; gap: 12px; overflow: hidden;
+  border-color: color-mix(in srgb, var(--diff) 40%, transparent);
+  background:
+    radial-gradient(110% 70% at 100% 0%, color-mix(in srgb, var(--diff) 20%, transparent), transparent 60%),
+    linear-gradient(180deg, rgba(36, 14, 20, 0.88), rgba(11, 15, 22, 0.94));
+}
+.arena-offer::before, .arena-offer::after { border-color: var(--diff); }
+.arena-offer > * { position: relative; }
+.arena-offer--new { animation: pop 0.4s cubic-bezier(.2, 1.3, .4, 1); }
+.arena-offer--active { border-color: rgba(255, 61, 87, 0.8); box-shadow: 0 0 0 1px rgba(255, 61, 87, 0.5), 0 0 24px rgba(255, 61, 87, 0.25); }
+.arena-offer--locked { filter: saturate(0.55); }
+
+.arena-offer__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.arena-offer__slot { white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--diff); }
+.arena-offer__slot .ico { width: 18px; height: 18px; }
+
+.arena-threat { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+.arena-threat__label { font-family: var(--font-display); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); margin-right: 4px; }
+.arena-threat__seg { display: block; width: 11px; height: 7px; transform: skewX(-22deg); background: rgba(255, 255, 255, 0.1); border-radius: 1px; }
+.arena-threat__seg.is-on { background: var(--diff); box-shadow: 0 0 6px color-mix(in srgb, var(--diff) 80%, transparent); }
+
+.arena-offer__title { font-size: 1.12rem; line-height: 1.25; letter-spacing: 0.01em; }
+.arena-offer__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+/* Muskeln der Gruppe: "Brust · Trizeps · Schultern" */
+.arena-offer__muscles { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; margin-top: -4px; font-family: var(--font-display); font-weight: 600; font-size: 0.9rem; letter-spacing: 0.02em; color: var(--text); }
+.arena-offer__muscles .ico { width: 17px; height: 17px; color: var(--g, var(--cyan)); }
+.arena-offer__muscles-label { color: var(--text-faint); font-weight: 600; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* Unbekannter Gegner */
+.arena-offer__foe {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px; min-height: 48px;
+  border-radius: var(--radius-sm); border: 1px dashed color-mix(in srgb, var(--diff) 40%, transparent);
+  background: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0.28) 0 8px, rgba(0, 0, 0, 0.16) 8px 16px);
+}
+.arena-offer__foe-icon { color: color-mix(in srgb, var(--diff) 70%, #000); opacity: 0.85; filter: blur(0.4px); }
+.arena-offer__foe-icon .ico { width: 28px; height: 28px; }
+.arena-offer__foe-text { color: var(--text-dim); font-family: var(--font-display); font-weight: 600; letter-spacing: 0.04em; }
+.arena-offer__foe-text b { color: var(--text); letter-spacing: 0.2em; }
+.arena-offer__live { margin-left: auto; }
+
+/* Knöpfe nebeneinander; wird es zu eng, rutscht "Ablehnen" in eine eigene Zeile */
+.arena-offer__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+.arena-offer__actions > .btn { flex: 1 0 auto; }
+.arena-offer__actions > .arena-offer__fight { flex-grow: 2; }
+.arena-offer__fight { box-shadow: 0 0 0 1px rgba(255, 61, 87, 0.5), 0 6px 22px rgba(255, 61, 87, 0.3); }
+.arena-offer__skip { color: var(--text-dim); border-color: rgba(255, 255, 255, 0.14); }
+
+/* Ablehnen-Regel über den Angeboten (1× pro Tag gratis) */
+.arena-skip { display: flex; align-items: flex-start; gap: 8px; margin-top: -8px; font-size: 0.85rem; line-height: 1.35; color: var(--text-dim); }
+.arena-skip .ico { width: 16px; height: 16px; margin-top: 1px; color: var(--red); }
+.arena-skip.is-used, .arena-skip.is-used .ico { color: var(--amber); }
+/* Zirkus-Sperre: Hinweis über den gesperrten Angeboten (Grund + "Zum Zirkus" stehen in der Sperr-Zeile oben) */
+.arena-skip.is-locked { color: #ffe2b0; }
+.arena-skip.is-locked .ico { color: var(--amber); }
+.arena-offer__hint { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-faint); margin-top: -4px; }
+.arena-offer__hint .ico { width: 15px; height: 15px; }
+
+/* Insane: pulsierender roter Rand + großer Totenkopf */
+.arena-offer--insane {
+  border-color: rgba(255, 61, 87, 0.75);
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgba(255, 61, 87, 0.3), transparent 60%),
+    repeating-linear-gradient(135deg, rgba(255, 61, 87, 0.05) 0 12px, transparent 12px 24px),
+    linear-gradient(180deg, rgba(52, 10, 18, 0.92), rgba(12, 12, 20, 0.95));
+  animation: arenaPulse 1.9s ease-in-out infinite;
+}
+.arena-offer--insane.arena-offer--new { animation: pop 0.4s cubic-bezier(.2, 1.3, .4, 1), arenaPulse 1.9s ease-in-out 0.4s infinite; }
+.arena-offer--insane .arena-offer__title { text-shadow: 0 0 16px rgba(255, 61, 87, 0.55); }
+.arena-offer__skull {
+  position: absolute !important; right: -14px; top: 26px; color: var(--red); opacity: 0.1; pointer-events: none;
+  transform: rotate(-12deg);
+}
+.arena-offer__skull .ico { width: 130px; height: 130px; stroke-width: 1.3; }
+@keyframes arenaPulse {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(255, 61, 87, 0.4), 0 0 12px rgba(255, 61, 87, 0.15); }
+  50% { box-shadow: 0 0 0 2px rgba(255, 61, 87, 0.95), 0 0 34px rgba(255, 61, 87, 0.45); }
+}
+
+.arena .section-title, .kampf .section-title { color: var(--red); }
+
+/* Regeln unten */
+.arena-rules { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 61, 87, 0.16); background: rgba(12, 16, 24, 0.6); }
+.arena-rules p { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-dim); }
+.arena-rules .ico { width: 18px; height: 18px; color: var(--red); }
+.arena-rules .tone-gold .ico { color: var(--gold); }
+
+@media (max-width: 380px) {
+  .arena-hero { gap: 12px; padding: 20px 12px 16px; }
+  .arena-npc { width: 74px; height: 74px; }
+  .arena-npc__inner .ico { width: 40px; height: 40px; }
+  .arena-hero__quote { font-size: 1rem; }
+  .arena-stats .stat__value { font-size: 1.35rem; }
+}
+
+/* ============================================================
+   KAMPF
+   ============================================================ */
+
+.kampf.screen__inner { max-width: 1080px; }
+
+/* Handy: eine Spalte, Reihenfolge per "order". Breit: Bühne + Monster links, du + Eingabe rechts. */
+.kampf-grid { display: flex; flex-direction: column; gap: 14px; }
+.kampf-col { display: contents; }
+.kampf-stage { order: 1; }
+.kampf-hp { order: 2; }
+.kampf-win { order: 3; }
+.kampf-me { order: 4; }
+.kampf-entry { order: 5; }
+.kampf-actions { order: 6; }
+.kampf-rules { order: 7; }
+.kampf-sets { order: 8; }
+.kampf-file { order: 9; }
+
+@media (min-width: 1080px), (min-width: 720px) and (max-height: 540px) {
+  .kampf-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .kampf-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+}
+
+/* ---------- Kleine HP-Leiste oben (erscheint beim Scrollen) ----------
+   Liegt im Bildschirm-Rahmen zwischen Kopf und Inhalt (Höhe 0) und hängt über dem Inhalt. */
+.kampf-hud { position: relative; z-index: 30; flex: none; height: 0; }
+.kampf-hud__panel {
+  position: absolute; left: 0; right: 0; top: 0;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 10px;
+  width: calc(100% - 20px - var(--safe-l) - var(--safe-r)); max-width: 1080px; margin: 0 auto; padding: 9px 12px 10px;
+  border: 1px solid rgba(255, 61, 87, 0.38); border-top: 0; border-radius: 0 0 14px 14px;
+  background: linear-gradient(180deg, rgba(10, 14, 20, 0.97), rgba(16, 10, 16, 0.95));
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.55), 0 0 22px rgba(255, 61, 87, 0.12);
+  color: var(--text); text-align: left; cursor: pointer;
+  transform: translateY(-10px); opacity: 0; visibility: hidden; pointer-events: none;
+  transition: transform 0.22s cubic-bezier(.2, .8, .2, 1), opacity 0.2s, visibility 0s 0.22s;
+}
+.kampf-hud.is-on .kampf-hud__panel { transform: none; opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
+@media (min-width: 900px) and (min-height: 560px) { .kampf-hud__panel { width: calc(100% - 48px); } }
+.kampf-hud__side { position: relative; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.kampf-hud__side--me { flex-direction: row-reverse; }
+.kampf-hud__icon { display: inline-flex; color: var(--red); }
+.kampf-hud__icon .ico { width: 20px; height: 20px; }
+.kampf-hud__side--me .kampf-hud__icon { color: var(--lime); }
+.kampf-hud__side--me .kampf-hud__icon .ico { fill: currentColor; fill-opacity: 0.25; }
+.kampf-hud__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.kampf-hud__row { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; min-width: 0; }
+.kampf-hud__side--me .kampf-hud__row { flex-direction: row-reverse; }
+.kampf-hud__who { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-display); font-weight: 700; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+.kampf-hud__num { flex: none; font-weight: 700; font-size: 0.9rem; }
+.kampf-hud__bar { position: relative; display: block; height: 8px; border-radius: 99px; overflow: hidden; background: rgba(4, 9, 14, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); }
+.kampf-hud__fill { position: absolute; top: 0; bottom: 0; left: 0; width: 100%; border-radius: inherit; background: linear-gradient(90deg, #b0122b, var(--red)); box-shadow: 0 0 10px rgba(255, 61, 87, 0.5); transition: width 0.45s cubic-bezier(.2, .8, .2, 1); }
+/* deine HP laufen gespiegelt (von rechts) – wie in einem Prügelspiel */
+.kampf-hud__side--me .kampf-hud__fill { left: auto; right: 0; background: linear-gradient(270deg, #6fcf1f, var(--lime)); box-shadow: 0 0 10px rgba(166, 255, 77, 0.45); }
+.kampf-hud__side--me.is-warn .kampf-hud__fill { background: linear-gradient(270deg, #e08a12, var(--amber)); box-shadow: 0 0 10px rgba(255, 181, 61, 0.45); }
+.kampf-hud__side--me.is-low .kampf-hud__fill { background: linear-gradient(270deg, #b0122b, var(--red)); box-shadow: 0 0 10px rgba(255, 61, 87, 0.5); }
+.kampf-hud__side--me.is-warn .kampf-hud__icon { color: var(--amber); }
+.kampf-hud__side--me.is-low .kampf-hud__icon { color: var(--red); }
+.kampf-hud.is-won .kampf-hud__side--foe .kampf-hud__icon, .kampf-hud.is-won .kampf-hud__side--foe .kampf-hud__num { color: var(--gold); }
+.kampf-hud__vs { font-family: var(--font-display); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.12em; color: var(--red); text-shadow: 0 0 10px rgba(255, 61, 87, 0.6); }
+/* Treffer-Zahlen der Leiste erscheinen als kleine Pille direkt darunter (die Leiste bleibt lesbar) */
+.kampf-hud__fx { position: absolute; left: 0; right: 0; top: 100%; height: 0; pointer-events: none; }
+
+/* ---------- Bühne ---------- */
+.kampf-stage {
+  --enemy: var(--red);
+  position: relative; height: 236px; overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 61, 87, 0.38);
+  background:
+    radial-gradient(55% 32% at 50% 90%, color-mix(in srgb, var(--enemy) 38%, transparent), transparent 72%),
+    radial-gradient(80% 60% at 50% -5%, rgba(255, 61, 87, 0.2), transparent 62%),
+    linear-gradient(180deg, #150a11 0%, #0b1017 58%, #05080c 100%);
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.65), 0 0 28px rgba(255, 61, 87, 0.1);
+}
+/* Boden-Raster in Perspektive */
+.kampf-stage::before {
+  content: ''; position: absolute; left: -30%; right: -30%; bottom: 0; height: 46%; pointer-events: none;
+  background-image: linear-gradient(rgba(62, 230, 208, 0.13) 1px, transparent 1px), linear-gradient(90deg, rgba(62, 230, 208, 0.13) 1px, transparent 1px);
+  background-size: 30px 30px;
+  transform: perspective(260px) rotateX(58deg); transform-origin: 50% 100%;
+  mask-image: linear-gradient(0deg, #000 10%, transparent 95%);
+  -webkit-mask-image: linear-gradient(0deg, #000 10%, transparent 95%);
+}
+/* Scanlines */
+.kampf-stage::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 3px);
+}
+.kampf-stage__holo { position: relative; z-index: 1; width: 100%; height: 100%; }
+.kampf-stage.is-hit { animation: shake 0.35s ease; }
+
+.kampf-stage__corner { position: absolute; top: 10px; z-index: 3; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+.kampf-stage__corner--l { left: 10px; align-items: flex-start; }
+.kampf-stage__corner--r { right: 10px; align-items: flex-end; }
+.kampf-stage__corner .chip { background: rgba(6, 10, 15, 0.72); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.kampf-stage__corner .chip--diff { background: color-mix(in srgb, var(--chip-color) 16%, rgba(6, 10, 15, 0.75)); }
+/* über dem Hologramm: gleiche Farbe, aber dunkler Grund, damit der Chip lesbar bleibt */
+.kampf-stage__corner .chip--group { background: color-mix(in srgb, var(--g) 13%, rgba(6, 10, 15, 0.75)); }
+
+.kampf-tier { display: inline-flex; gap: 1px; padding: 3px 6px; border-radius: 999px; background: rgba(6, 10, 15, 0.72); border: 1px solid rgba(255, 61, 87, 0.3); }
+.kampf-tier__pip { display: inline-flex; color: rgba(255, 255, 255, 0.16); }
+.kampf-tier__pip .ico { width: 15px; height: 15px; }
+.kampf-tier__pip.is-on { color: var(--red); filter: drop-shadow(0 0 4px rgba(255, 61, 87, 0.8)); }
+
+/* "BESIEGT"-Stempel */
+.kampf-stage__stamp {
+  position: absolute; left: 50%; top: 56%; z-index: 4; display: none; align-items: center; gap: 8px;
+  transform: translate(-50%, -50%) rotate(-10deg);
+  padding: 6px 18px 6px 14px; border-radius: 8px;
+  border: 3px solid var(--gold); color: var(--gold); background: rgba(16, 12, 2, 0.6);
+  font-family: var(--font-display); font-weight: 700; font-size: 1.8rem; letter-spacing: 0.18em; text-transform: uppercase;
+  box-shadow: 0 0 26px rgba(233, 196, 106, 0.45), inset 0 0 14px rgba(233, 196, 106, 0.25);
+  text-shadow: 0 0 14px rgba(233, 196, 106, 0.7);
+  pointer-events: none;
+}
+.kampf-stage__stamp .ico { width: 28px; height: 28px; }
+.kampf-stage.is-defeated .kampf-stage__stamp { display: flex; animation: kampfStamp 0.5s 0.9s cubic-bezier(.2, 1.4, .4, 1) both; }
+.kampf-stage.is-defeated { border-color: rgba(233, 196, 106, 0.55); }
+@keyframes kampfStamp {
+  from { opacity: 0; transform: translate(-50%, -50%) rotate(-10deg) scale(2.2); }
+  to { opacity: 1; transform: translate(-50%, -50%) rotate(-10deg) scale(1); }
+}
+
+/* Effekte: Treffer-Blitz */
+.kampf-stage__fx { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
+.kampf-stage__fx::before { content: ''; position: absolute; inset: 0; opacity: 0; background: radial-gradient(circle at 50% 45%, rgba(255, 61, 87, 0.45), transparent 62%); }
+.kampf-stage__fx.is-flash::before { animation: kampfFlash 0.45s ease-out; }
+.kampf-stage__fx.is-crit::before { background: radial-gradient(circle at 50% 45%, rgba(255, 181, 61, 0.6), rgba(255, 61, 87, 0.2) 45%, transparent 70%); animation: kampfFlash 0.7s ease-out; }
+.kampf-stage__fx.is-gold::before { background: radial-gradient(circle at 50% 50%, rgba(233, 196, 106, 0.55), transparent 65%); animation: kampfFlash 1.1s ease-out; }
+@keyframes kampfFlash { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+/* ---------- Schwebende Zahlen (−600 / Kritisch!) ---------- */
+.kampf-float {
+  position: absolute; z-index: 6; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  line-height: 1; white-space: nowrap; pointer-events: none;
+  animation: kampfFloat 1.2s cubic-bezier(.2, .8, .2, 1) forwards;
+}
+.kampf-float.is-crit { animation-duration: 1.6s; }
+.kampf-float__num {
+  font-family: var(--font-display); font-weight: 700; font-size: 2.1rem; color: #fff;
+  text-shadow: 0 0 14px rgba(255, 61, 87, 0.95), 0 2px 0 #000, 0 0 2px #000;
+}
+.kampf-float.is-crit .kampf-float__num { font-size: 2.9rem; color: #ffd36b; text-shadow: 0 0 20px rgba(255, 181, 61, 0.95), 0 2px 0 #000, 0 0 2px #000; }
+.kampf-float__crit {
+  padding: 3px 10px 2px; border-radius: 6px;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.18em; text-transform: uppercase; color: #2a1200;
+  background: linear-gradient(180deg, #ffd36b, #f08a1c);
+  box-shadow: 0 0 18px rgba(255, 150, 40, 0.75), 0 2px 0 rgba(0, 0, 0, 0.6);
+  transform: rotate(-4deg);
+}
+/* Gegentreffer auf deinem HP-Balken: fällt vom Balken nach unten (die HP-Zahl darüber bleibt lesbar) */
+.kampf-float--me { transform: translate(-50%, 0); animation-name: kampfFall; }
+.kampf-float--me .kampf-float__crit { order: 2; transform: rotate(3deg); }
+.kampf-float--me .kampf-float__num { font-size: 1.65rem; color: #ff6b80; text-shadow: 0 0 12px rgba(255, 61, 87, 0.95), 0 2px 0 #000, 0 0 2px #000; }
+.kampf-float--me.is-crit .kampf-float__num { font-size: 2.2rem; color: #ff4d64; text-shadow: 0 0 18px rgba(255, 61, 87, 1), 0 2px 0 #000, 0 0 2px #000; }
+.kampf-float--me .kampf-float__crit { font-size: 0.78rem; color: #fff; background: linear-gradient(180deg, #ff5a70, #c8102e); box-shadow: 0 0 16px rgba(255, 61, 87, 0.8), 0 2px 0 rgba(0, 0, 0, 0.6); }
+/* klein unter der HP-Leiste oben */
+.kampf-float--hud { top: 22px !important; animation-name: kampfDrop; }
+.kampf-float--hud .kampf-float__num {
+  padding: 3px 9px 2px; border-radius: 99px; font-size: 0.92rem; color: #ffb3bf; text-shadow: none;
+  background: rgba(46, 8, 16, 0.95); border: 1px solid rgba(255, 61, 87, 0.65); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+@keyframes kampfDrop {
+  0% { opacity: 0; transform: translate(-50%, -90%) scale(0.8); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  30% { transform: translate(-50%, -50%) scale(1); }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, 10%); }
+}
+@keyframes kampfFloat {
+  0% { opacity: 0; transform: translate(-50%, -30%) scale(0.5); }
+  12% { opacity: 1; transform: translate(-50%, -50%) scale(1.25); }
+  26% { transform: translate(-50%, -58%) scale(1); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -175%) scale(0.95); }
+}
+@keyframes kampfFall {
+  0% { opacity: 0; transform: translate(-50%, -20%) scale(0.6); }
+  14% { opacity: 1; transform: translate(-50%, 0) scale(1.2); }
+  28% { transform: translate(-50%, 0) scale(1); }
+  72% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, 55%) scale(0.95); }
+}
+
+/* Roter Rand-Blitz über den ganzen Bildschirm bei einem kritischen Gegentreffer */
+.kampf-flash {
+  position: absolute; inset: 0; z-index: 60; pointer-events: none; opacity: 0; border-radius: inherit;
+  background: radial-gradient(ellipse at center, rgba(255, 61, 87, 0) 38%, rgba(255, 61, 87, 0.5) 100%);
+  box-shadow: inset 0 0 0 3px rgba(255, 61, 87, 0.75), inset 0 0 60px rgba(255, 61, 87, 0.45);
+}
+.kampf-flash.is-on { animation: kampfFlash 0.6s ease-out; }
+.kampf-flash.is-static { opacity: 0.55; }
+
+/* Ersatzanzeige ohne Hologramm */
+.kampf-fb { display: grid; place-items: center; }
+.kampf-fb__fig {
+  position: relative; z-index: 1; color: var(--enemy);
+  filter: drop-shadow(0 0 16px var(--enemy)) drop-shadow(0 0 2px #fff);
+  animation: kampfHover 3.2s ease-in-out infinite;
+  transition: opacity 0.8s, filter 0.8s, transform 0.8s;
+}
+.kampf-fb__fig .ico { width: 124px; height: 124px; stroke-width: 1.1; }
+.kampf-fb__fig.is-hit { animation: shake 0.32s ease; }
+.kampf-fb__ring {
+  position: absolute; left: 50%; bottom: 13%; width: 190px; height: 44px; margin-left: -95px; border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--enemy) 65%, transparent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--enemy) 60%, transparent), inset 0 0 16px color-mix(in srgb, var(--enemy) 40%, transparent);
+}
+.kampf-fb__ring--2 { width: 130px; height: 28px; margin-left: -65px; bottom: calc(13% + 8px); opacity: 0.6; animation: pulse 2s ease-in-out infinite; }
+.kampf-fb.is-defeated .kampf-fb__fig { animation: none; opacity: 0.35; filter: grayscale(1) brightness(0.6); transform: translateY(26px) rotate(12deg) scale(0.92); }
+.kampf-fb.is-defeated .kampf-fb__ring { opacity: 0.25; }
+@keyframes kampfHover { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+/* ---------- Monster: Name, Gesamt-HP, Balken je Muskel ---------- */
+.kampf-hp {
+  display: flex; flex-direction: column; gap: 10px;
+  background: linear-gradient(180deg, rgba(34, 14, 20, 0.82), rgba(11, 15, 22, 0.92));
+}
+.kampf-hp__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.kampf-hp__who { min-width: 0; }
+.kampf-hp__adv { font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: #ff8a9a; margin-bottom: 2px; }
+.kampf-hp__name { font-size: 1.5rem; line-height: 1.1; letter-spacing: 0.03em; text-transform: uppercase; overflow-wrap: anywhere; }
+.kampf-hp__weapon { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 0.88rem; color: var(--text-dim); }
+.kampf-hp__weapon .ico { width: 17px; height: 17px; color: var(--red); }
+
+.kampf-hp__bar.bar { height: 30px; border-color: rgba(255, 61, 87, 0.35); background: rgba(20, 4, 8, 0.85); }
+.kampf-hp__bar .bar__fill { z-index: 1; transition: width 0.45s cubic-bezier(.2, .8, .2, 1); }
+.kampf-hp__bar .bar__label { z-index: 2; font-size: 0.92rem; letter-spacing: 0.06em; }
+/* heller Rest, der verzögert nachläuft (zeigt den gerade verlorenen HP-Teil) */
+.kampf-hp__trail {
+  position: absolute; inset: 0 auto 0 0; z-index: 0; border-radius: inherit;
+  background: linear-gradient(90deg, rgba(255, 190, 200, 0.6), rgba(255, 120, 140, 0.6));
+  transition: width 0.7s ease-in 0.45s;
+}
+.kampf-hp.is-won { border-color: rgba(233, 196, 106, 0.5); }
+.kampf-hp.is-won::before, .kampf-hp.is-won::after { border-color: var(--gold); }
+
+.kampf-parts__head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: 2px; }
+.kampf-parts__title { font-family: var(--font-display); font-weight: 600; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); }
+.kampf-parts__tip { font-size: 0.75rem; color: var(--text-faint); white-space: nowrap; }
+.kampf-parts { display: flex; flex-direction: column; gap: 6px; }
+
+.kampf-part {
+  position: relative;
+  display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; grid-template-areas: 'icon name num' 'bar bar bar';
+  align-items: center; column-gap: 9px; row-gap: 7px;
+  width: 100%; min-height: 50px; padding: 8px 11px 10px; margin: 0;
+  border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(6, 10, 15, 0.55); color: var(--text); text-align: left; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.08s;
+}
+.kampf-part:hover { border-color: rgba(62, 230, 208, 0.4); }
+.kampf-part:active { transform: scale(0.99); }
+.kampf-part__icon { grid-area: icon; display: inline-flex; color: var(--text-dim); }
+.kampf-part__icon .ico { width: 21px; height: 21px; }
+.kampf-part__name { grid-area: name; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; letter-spacing: 0.07em; text-transform: uppercase; }
+.kampf-part__num { grid-area: num; font-weight: 700; font-size: 0.98rem; color: var(--text); white-space: nowrap; }
+.kampf-part__bar { grid-area: bar; position: relative; display: block; height: 9px; border-radius: 99px; overflow: hidden; background: rgba(4, 9, 14, 0.9); border: 1px solid rgba(62, 230, 208, 0.16); }
+.kampf-part__fill {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 0; border-radius: inherit;
+  background: linear-gradient(90deg, var(--cyan-2), var(--cyan)); box-shadow: 0 0 10px rgba(62, 230, 208, 0.45);
+  transition: width 0.5s cubic-bezier(.2, .8, .2, 1);
+}
+.kampf-part__fill::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.14) 0 6px, transparent 6px 14px); }
+/* gewählter Muskel (Ziel des nächsten Satzes) */
+.kampf-part.is-sel { border-color: rgba(62, 230, 208, 0.7); background: rgba(62, 230, 208, 0.08); box-shadow: 0 0 0 1px rgba(62, 230, 208, 0.25), 0 0 18px rgba(62, 230, 208, 0.12); }
+.kampf-part.is-sel .kampf-part__icon, .kampf-part.is-sel .kampf-part__name { color: var(--cyan); }
+/* voller Balken */
+.kampf-part.is-done { border-color: rgba(166, 255, 77, 0.42); background: rgba(166, 255, 77, 0.06); }
+.kampf-part.is-done.is-sel { box-shadow: 0 0 0 1px rgba(166, 255, 77, 0.3), 0 0 18px rgba(166, 255, 77, 0.12); }
+.kampf-part.is-done .kampf-part__icon, .kampf-part.is-done .kampf-part__name, .kampf-part.is-done .kampf-part__num { color: var(--lime); }
+.kampf-part.is-done .kampf-part__icon .ico { stroke-width: 2.6; }
+.kampf-part.is-done .kampf-part__bar { border-color: rgba(166, 255, 77, 0.3); }
+.kampf-part.is-done .kampf-part__fill { background: linear-gradient(90deg, #6fcf1f, var(--lime)); box-shadow: 0 0 10px rgba(166, 255, 77, 0.5); }
+.kampf-part.is-hit { animation: kampfPartHit 0.55s ease; }
+@keyframes kampfPartHit {
+  0% { background: rgba(255, 255, 255, 0.2); }
+  100% { background: rgba(6, 10, 15, 0.55); }
+}
+
+/* ---------- Sieg-Hinweis ---------- */
+.kampf-win {
+  display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: var(--radius);
+  border: 1px solid rgba(233, 196, 106, 0.6);
+  background:
+    radial-gradient(90% 140% at 0% 50%, rgba(233, 196, 106, 0.28), transparent 60%),
+    linear-gradient(180deg, rgba(42, 32, 10, 0.9), rgba(16, 14, 10, 0.92));
+  box-shadow: 0 0 30px rgba(233, 196, 106, 0.2);
+  animation: pop 0.45s cubic-bezier(.2, 1.3, .4, 1);
+}
+.kampf-win__icon { color: var(--gold); filter: drop-shadow(0 0 10px rgba(233, 196, 106, 0.8)); flex: none; }
+.kampf-win__icon .ico { width: 42px; height: 42px; stroke-width: 1.5; }
+.kampf-win__text { min-width: 0; }
+.kampf-win__title { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold); }
+.kampf-win p { font-size: 0.88rem; color: #e9dcb8; margin-top: 2px; }
+.kampf-win__vals { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.kampf-win__val { display: inline-flex; align-items: baseline; gap: 6px; padding: 3px 9px; border-radius: 99px; border: 1px solid rgba(233, 196, 106, 0.4); background: rgba(233, 196, 106, 0.08); font-size: 0.8rem; color: #f3e6c2; }
+.kampf-win__val b { font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); }
+.kampf-win__val i { font-style: normal; color: var(--lime); font-weight: 700; }
+
+/* ---------- Spieler: deine HP + letzte Runde ---------- */
+.kampf-me {
+  display: flex; flex-direction: column; gap: 10px;
+  border-color: rgba(166, 255, 77, 0.3);
+  background:
+    radial-gradient(80% 90% at 0% 0%, rgba(166, 255, 77, 0.09), transparent 60%),
+    linear-gradient(180deg, rgba(15, 28, 24, 0.84), rgba(10, 16, 20, 0.92));
+}
+.kampf-me::before, .kampf-me::after { border-color: var(--lime); }
+.kampf-me.is-warn { border-color: rgba(255, 181, 61, 0.4); }
+.kampf-me.is-warn::before, .kampf-me.is-warn::after { border-color: var(--amber); }
+.kampf-me.is-low { border-color: rgba(255, 61, 87, 0.5); background: radial-gradient(80% 90% at 0% 0%, rgba(255, 61, 87, 0.14), transparent 60%), linear-gradient(180deg, rgba(34, 14, 20, 0.86), rgba(11, 15, 22, 0.94)); }
+.kampf-me.is-low::before, .kampf-me.is-low::after { border-color: var(--red); }
+.kampf-me.is-hit { animation: kampfMeHit 0.45s ease; }
+.kampf-me.is-shake { animation: shake 0.4s ease, kampfMeHit 0.6s ease; }
+@keyframes kampfMeHit { 0% { box-shadow: 0 0 0 2px rgba(255, 61, 87, 0.8), 0 0 30px rgba(255, 61, 87, 0.45); } 100% { box-shadow: none; } }
+
+.kampf-me__head { display: flex; align-items: center; gap: 8px; }
+.kampf-me__heart { display: inline-flex; color: var(--lime); filter: drop-shadow(0 0 8px rgba(166, 255, 77, 0.5)); }
+.kampf-me__heart .ico { width: 24px; height: 24px; fill: currentColor; fill-opacity: 0.22; }
+.kampf-me.is-warn .kampf-me__heart { color: var(--amber); filter: drop-shadow(0 0 8px rgba(255, 181, 61, 0.5)); }
+.kampf-me.is-low .kampf-me__heart { color: var(--red); filter: drop-shadow(0 0 8px rgba(255, 61, 87, 0.6)); animation: kampfBeat 1s ease-in-out infinite; }
+@keyframes kampfBeat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.2); } 30% { transform: scale(1); } 45% { transform: scale(1.12); } }
+.kampf-me__title { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.kampf-me__num { margin-left: auto; font-size: 1.35rem; font-weight: 700; white-space: nowrap; }
+.kampf-me.is-warn .kampf-me__num { color: var(--amber); }
+.kampf-me.is-low .kampf-me__num { color: #ff6b80; }
+.kampf-me__barwrap { position: relative; }
+.kampf-me__bar.bar { height: 16px; }
+.kampf-me__fx { position: absolute; left: 0; right: 0; top: 0; bottom: 0; pointer-events: none; z-index: 3; }
+
+.kampf-ex { display: flex; flex-direction: column; gap: 4px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.07); }
+.kampf-ex__title { font-family: var(--font-display); font-weight: 600; font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); }
+/* Zeile = Icon + ein Satz daneben (.kampf-ex__line: Text, Zahl, "Kritisch" im Fließtext).
+   Lange Gegner-Namen brechen neben dem Icon um – das Icon steht nie allein in einer Zeile. */
+.kampf-ex__row { display: flex; align-items: flex-start; gap: 8px; min-height: 28px; padding: 3px 0; font-size: 0.92rem; line-height: 22px; color: var(--text); }
+.kampf-ex__row > .kampf-i { margin-top: 2px; }
+.kampf-ex__row > .kampf-i .ico { width: 18px; height: 18px; }
+.kampf-ex__line { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.kampf-ex__line .kampf-crit { vertical-align: 1px; }
+/* nur das Zeilen-Icon färben (nicht das Blitz-Icon im "Kritisch"-Abzeichen) */
+.kampf-ex__row--you > .kampf-i { color: var(--cyan); }
+.kampf-ex__row--foe > .kampf-i { color: var(--red); }
+.kampf-ex__row.is-idle { color: var(--text-dim); }
+.kampf-ex__row.is-idle > .kampf-i { opacity: 0.7; }
+.kampf-ex__row.is-calm { color: #f3e6c2; }
+.kampf-ex__row.is-calm > .kampf-i { color: var(--gold); }
+.kampf-ex__row.is-wait .kampf-ex__text { color: var(--text-dim); font-style: italic; animation: pulse 0.9s ease-in-out infinite; }
+.kampf-ex__num { font-family: var(--font-display); font-weight: 700; font-size: 1.08rem; white-space: nowrap; }
+.kampf-ex__row--you .kampf-ex__num { color: var(--cyan); }
+.kampf-ex__row--you.is-crit .kampf-ex__num { color: #ffd36b; }
+.kampf-ex__row--foe .kampf-ex__num { color: #ff6b80; }
+
+/* "Kritisch"-Abzeichen */
+.kampf-crit {
+  display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px 2px 5px; border-radius: 99px;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.3;
+  color: #2a1200; background: linear-gradient(180deg, #ffd36b, #f0a51c); box-shadow: 0 0 10px rgba(255, 170, 50, 0.4);
+  white-space: nowrap;
+}
+.kampf-crit .ico { width: 12px; height: 12px; stroke-width: 2.4; }
+.kampf-crit--foe { color: #fff; background: linear-gradient(180deg, #ff5a70, #c8102e); box-shadow: 0 0 10px rgba(255, 61, 87, 0.45); }
+
+/* ---------- Eingabe (Angriff) ---------- */
+.kampf-entry { border-color: rgba(255, 61, 87, 0.3); }
+.kampf-entry::before, .kampf-entry::after { border-color: var(--red); }
+.kampf-entry .set-entry__preview { color: #ff8a9a; }
+.kampf-entry .set-entry__preview.kampf-preview--crit { color: #ffd36b; text-shadow: 0 0 12px rgba(255, 181, 61, 0.5); }
+.kampf-entry .set-entry__preview.kampf-preview--crit::after {
+  content: 'Kritisch!'; display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 99px; vertical-align: 3px;
+  font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: #2a1200;
+  background: linear-gradient(180deg, #ffd36b, #f0a51c); text-shadow: none;
+}
+.kampf-entry .btn--primary {
+  background: linear-gradient(180deg, #ff5a70, #d11f3a); color: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 61, 87, 0.5), 0 6px 24px rgba(255, 61, 87, 0.35);
+  letter-spacing: 0.12em;
+}
+.kampf-entry .btn--primary:hover { box-shadow: 0 0 0 1px rgba(255, 61, 87, 0.8), 0 6px 28px rgba(255, 61, 87, 0.5); }
+.kampf-entry .input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(255, 61, 87, 0.2); }
+/* Muskel-Auswahl: voller Balken = Haken STATT des Muskel-Icons (nichts wird angehängt, der Name bleibt ganz lesbar) */
+.kampf-entry .seg__btn .kampf-seg__check { display: none; }
+.kampf-entry .seg__btn.is-done { color: var(--lime); }
+.kampf-entry .seg__btn.is-done .ico { display: none; }
+.kampf-entry .seg__btn.is-done .kampf-seg__check { display: block; stroke-width: 2.6; }
+.kampf-entry .seg__btn.is-on.is-done { color: var(--lime); box-shadow: inset 0 0 0 1px rgba(166, 255, 77, 0.45); }
+.kampf-entry .seg__btn.is-picked { animation: pop 0.35s cubic-bezier(.2, 1.3, .4, 1); }
+/* schmale Handys: Muskel-Icons weg (wie im Gym), damit "Schultern" ganz hineinpasst – der Haken bleibt */
+@media (max-width: 400px) {
+  .kampf-entry .set-entry__muscles .seg__btn { gap: 4px; padding: 8px 4px; }
+  .kampf-entry .set-entry__muscles .seg__btn .ico:not(.kampf-seg__check) { display: none; }
+}
+/* sehr schmal (unter 340 px): Haken klein in die Ecke, der Name behält die ganze Breite */
+@media (max-width: 340px) {
+  .kampf-entry .set-entry__muscles .seg__btn { position: relative; }
+  .kampf-entry .set-entry__muscles .seg__btn.is-done .kampf-seg__check { position: absolute; top: 3px; right: 3px; width: 12px; height: 12px; }
+}
+.kampf-entry.is-over { opacity: 0.5; pointer-events: none; }
+
+/* ---------- Knöpfe ---------- */
+.kampf-actions { display: flex; flex-direction: column; gap: 8px; }
+.kampf-end--risky { background: rgba(255, 61, 87, 0.06); color: #ff8a9a; border-color: rgba(255, 61, 87, 0.45); }
+.kampf-end--risky:hover { border-color: var(--red); background: rgba(255, 61, 87, 0.12); }
+.kampf-end--win { animation: pop 0.4s cubic-bezier(.2, 1.3, .4, 1); }
+.kampf-flee { color: var(--text-dim); }
+.kampf-actions__hint { font-size: 0.8rem; color: var(--text-faint); text-align: center; }
+
+.kampf-rules { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px dashed var(--line); font-size: 0.85rem; color: var(--text-dim); }
+.kampf-rules .ico { width: 18px; height: 18px; color: var(--cyan); margin-top: 1px; }
+
+/* ---------- Sätze (Schlagabtausch) ---------- */
+.kampf-sets { display: flex; flex-direction: column; gap: 8px; }
+.kampf-sets .set-list__item { border-color: rgba(255, 61, 87, 0.16); row-gap: 4px; }
+.kampf-sets .set-list__item.is-new { animation: fadeIn 0.3s ease; }
+.kampf-sets .set-list__dmg { color: #ff8a9a; white-space: nowrap; }
+.kampf-sets .set-list__item.is-crit { border-color: rgba(255, 181, 61, 0.35); }
+.kampf-sets .set-list__item.is-crit .set-list__dmg { color: #ffd36b; }
+.kampf-sl { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 0 0 2px 40px; font-size: 0.8rem; color: var(--text-dim); }
+/* Icon + Satz daneben (.kampf-sl__line bricht neben dem Icon um, das Icon steht nie allein) */
+.kampf-sl__foe, .kampf-sl__kill, .kampf-sl__calm { display: inline-flex; align-items: flex-start; gap: 5px; min-width: 0; line-height: 20px; }
+.kampf-sl__foe > .kampf-i, .kampf-sl__kill > .kampf-i, .kampf-sl__calm > .kampf-i { margin-top: 3px; }
+.kampf-sl__foe > .kampf-i .ico, .kampf-sl__kill > .kampf-i .ico, .kampf-sl__calm > .kampf-i .ico { width: 14px; height: 14px; }
+.kampf-sl__line { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.kampf-sl__line .kampf-crit { vertical-align: 1px; }
+/* nur das Zeilen-Icon rot (nicht den Blitz im roten "Kritisch"-Abzeichen) */
+.kampf-sl__foe > .kampf-i { color: var(--red); }
+.kampf-sl__foe b { color: #ff6b80; font-family: var(--font-display); white-space: nowrap; }
+.kampf-sl__kill { color: var(--gold); }
+.kampf-sl__calm { color: var(--text-faint); }
+.kampf.is-over .kampf-sets .icon-btn { visibility: hidden; }
+
+/* ---------- Gegner-Akte ---------- */
+.kampf-file { display: flex; flex-direction: column; gap: 10px; background: rgba(12, 16, 24, 0.7); border-color: rgba(255, 255, 255, 0.08); }
+.kampf-file__head { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); }
+.kampf-file__head .ico { width: 18px; height: 18px; color: var(--gold); }
+.kampf-file__facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; margin: 0; font-size: 0.88rem; }
+.kampf-file__facts dt { color: var(--text-faint); font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; }
+.kampf-file__facts dd { margin: 0; color: var(--text); overflow-wrap: anywhere; }
+.kampf-file__lore { font-size: 0.88rem; line-height: 1.5; color: var(--text-dim); font-style: italic; padding-left: 10px; border-left: 2px solid rgba(255, 61, 87, 0.4); }
+
+/* ---------- Kein Kampf ---------- */
+.kampf-empty { padding-top: 56px; }
+.kampf-empty .empty__icon { color: var(--red); }
+.kampf-empty__title { font-size: 1.3rem; color: var(--text); text-transform: uppercase; letter-spacing: 0.08em; }
+.kampf-empty__btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 10px; }
+.kampf-empty__btns .btn { min-width: 210px; }
+.kampf-btn--locked { opacity: 0.6; filter: saturate(0.5); }
+
+/* Weniger Bewegung gewünscht: Zahlen kurz stehend zeigen statt schweben (JS entfernt sie) */
+@media (prefers-reduced-motion: reduce) {
+  .kampf-float { animation: none !important; }
+  .kampf-me.is-low .kampf-me__heart { animation: none; }
+  .kampf-hud__panel { transition: none; }
+}
+
+/* ---------- Größen ---------- */
+@media (max-width: 370px) {
+  .kampf-stage { height: 212px; }
+  .kampf-hp__name { font-size: 1.25rem; }
+  .kampf-part__num { font-size: 0.9rem; }
+  .kampf-me__num { font-size: 1.15rem; }
+  .kampf-hud__who { display: none; }
+  .kampf-parts__tip { display: none; }
+}
+/* sehr schmal: "+1.050 Schaden" darf umbrechen, damit der Löschen-Knopf im Bild bleibt */
+@media (max-width: 340px) {
+  .kampf-sets .set-list__dmg { white-space: normal; text-align: right; }
+}
+@media (min-width: 600px) { .kampf-stage { height: 300px; } }
+@media (min-width: 1080px) { .kampf-stage { height: 340px; } }
+/* Handy quer: wenig Höhe */
+@media (max-height: 540px) and (min-width: 600px) { .kampf-stage { height: 200px; } }

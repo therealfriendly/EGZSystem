@@ -1,0 +1,137 @@
+EIGENE BILDER (SPRITES) FÜR DIE WELTKARTE
+==========================================
+
+In diesen Ordner kannst du eigene Bilder legen. Sie ersetzen dann auf der Karte
+das eingebaute Aussehen der Knöpfe (Pins, Schilder, Markierungen, Quest-Tafel).
+
+Du musst dafür KEINEN Code ändern:
+  1. Bild mit dem richtigen Namen hier hineinlegen (Liste unten).
+  2. App neu laden.
+Fehlt ein Bild oder ist es kaputt, zeigt die Karte einfach wieder das
+eingebaute Aussehen. Die Beschriftungen (z. B. "ARENA") bleiben stehen.
+Ausnahme: Taverne, Haus, Zauberbude und Schmuggler haben KEINE Beschriftung,
+weil ihr Name direkt darunter ins Kartenbild gemalt ist (siehe Punkt 3).
+
+Neu in Version 2 (Zirkus-Sperre, Push/Pull/Beine, Lauf-Timer):
+Dafür brauchst du KEINE neuen Bilder. Alles ist eingebaut:
+  - Gesperrte Orte (Arena, Gym, Abenteuer, Schmuggler) werden von der Karte
+    selbst abgedunkelt und bekommen ein Schloss – auch dein eigenes Bild.
+  - Der Sperr-Streifen oben, das Fähnchen "Zirkus!" an der Taverne und die
+    Banner (Kampf, Training, Lauf-Timer, Schmuggler, Zirkus-Tanz) sind
+    eingebaut und brauchen kein Bild.
+
+
+1) DATEINAMEN
+-------------
+Der Dateiname ist die "id" des Knopfs aus js/ui/map-config.js, immer klein
+geschrieben und mit .png am Ende:
+
+  Pins (Nadeln über den Gebäuden):
+    taverne.png      Taverne
+    arena.png        Arena
+    haus.png         Haus
+    zauberbude.png   Zauberbude
+
+  Schilder:
+    streak.png       Streak-Tafel oben links (nur der Hintergrund/Rahmen!)
+    gym.png          GYM-Schild unten rechts (nur der Hintergrund/Rahmen!)
+
+  Markierungen um gemalte Dinge:
+    abenteuer.png    das blaue Portal (Abenteuer)
+    schmuggler.png   der Schmuggler-Wagen
+    kalorien.png     die KCAL-Tafel mit dem Körper
+    profil.png       die kleine Läufer-Figur auf dem Weg
+
+  Tages-Quests (rechts oben):
+    quests.png       Tafel hinter den Tages-Quests (nur der Hintergrund/Rahmen!)
+                     Am PC ist das die ganze Tafel, auf dem Handy die Liste unter
+                     dem runden Quest-Knopf.
+
+  Spieler-Karte:
+    avatar.png       dein Bild in der Spieler-Karte und im Profil (wird als Sechseck zugeschnitten)
+
+  Händler-Porträts (in Taverne und Arena, quadratisch):
+    npc-abenteuer.png    Quartiermeisterin Vex (Abenteuer-Händlerin)
+    npc-schmuggler.png   Kurier Grau (Schmuggler)
+    npc-zirkus.png       Direktorin Madame Rune (Zirkus-Tänze)
+    npc-arena.png        der Arena-Meister
+
+
+2) EMPFOHLENE GRÖSSEN
+---------------------
+Am besten PNG mit durchsichtigem Hintergrund. Das Bild wird automatisch in
+die Fläche eingepasst (nichts wird verzerrt). Passt das Seitenverhältnis, füllt
+es die Fläche genau aus:
+
+  Pins (taverne, arena, haus, zauberbude):   256 x 320 px (Hochformat)
+      -> Kopf oben, Spitze unten. Die Mitte des Kopfs liegt bei ca. 128 / 128 px.
+  streak.png und gym.png:                     512 x 264 px (etwa 2 : 1)
+      -> Zahl, Flammen, Text "GYM" usw. werden ÜBER dein Bild gezeichnet.
+         Dein Bild ist also nur die Tafel dahinter.
+  abenteuer.png, kalorien.png:                256 x 256 px
+  schmuggler.png:                             320 x 280 px
+  profil.png:                                 192 x 320 px (Hochformat)
+  avatar.png:                                 256 x 256 px (quadratisch)
+  npc-*.png (Händler-Porträts):               256 x 256 px (quadratisch)
+  quests.png:                                 560 x 520 px (etwa quadratisch)
+      -> Achtung: dieses Bild wird auf die Größe der Tafel GEDEHNT (die Tafel
+         wird länger, je mehr Quests du hast). Nimm deshalb eine schlichte
+         Fläche mit Rahmen, ohne runde Formen oder Schrift.
+         Die Quests, Haken und Knöpfe werden ÜBER dein Bild gezeichnet.
+         Ein dunkles Bild ist besser lesbar als ein helles.
+
+Tipp: Lass oben rechts an Pins, Schildern und Markierungen etwas Luft.
+Dort erscheinen kleine Abzeichen ("!", Punkt oder das Schloss der Zirkus-Sperre).
+
+Doppelte Größe (z. B. 512 x 640 für Pins) sieht auf scharfen Handy-Displays
+noch besser aus. Bitte nicht viel größer – sonst lädt die App langsamer.
+
+
+3) POSITION, GRÖSSE ODER BESCHRIFTUNG ANPASSEN
+----------------------------------------------
+In js/ui/map-config.js steht für jeden Knopf:
+  x, y       Ankerpunkt in Prozent des Kartenbilds (0-100, von links / von oben)
+  w          Breite in Prozent der Kartenbreite
+  h          Höhe in Prozent der Kartenhöhe (nur Schilder und Markierungen)
+  showLabel  false = keine Beschriftung auf der Karte (z. B. weil der Name schon
+             ins Bild gemalt ist). Einfach löschen oder auf true setzen, dann
+             erscheint die Beschriftung wieder. Vorlesen (Bildschirmleser) und
+             der Tooltip am PC nennen den Namen immer.
+Kleine Änderungen (z. B. x: 22.9 -> 23.2) reichen meistens.
+
+Oben bei WORLD gibt es außerdem:
+  startAt    auf diesen Knopf schaut die Karte beim ersten Öffnen (Standard: haus)
+  keepClear  Handy: diese Nadel wird beim Start neben die offene Quest-Liste
+             geschoben, damit die Liste sie nicht verdeckt (Standard: arena)
+
+
+4) KARTENHINTERGRUND TAUSCHEN
+-----------------------------
+Das Bild der Welt ist:  assets/map/world.jpg  (jetzt 1345 x 941 px)
+
+  - Neues Bild mit GLEICHER Größe und gleichem Aufbau: einfach ersetzen, fertig.
+  - Andere Größe oder anderes Seitenverhältnis:
+      a) In js/ui/map-config.js oben bei WORLD die neue Breite (width) und
+         Höhe (height) des Bildes in Pixeln eintragen.
+      b) Die x/y-Werte aller Knöpfe neu messen. So geht es am einfachsten:
+         App öffnen, Entwickler-Konsole öffnen (am PC: F12) und eingeben:
+             OP.map.debug(true)
+         Jetzt zeigt jeder Klick auf die Karte die Stelle als "x: .. %, y: .. %".
+         Die Knöpfe sind dabei halb durchsichtig. Ausschalten mit:
+             OP.map.debug(false)
+
+
+5) WICHTIG FÜR DIE INSTALLIERTE APP (Handy-Startbildschirm)
+-----------------------------------------------------------
+Die App speichert ihre Dateien für den Offline-Betrieb. Nach Änderungen an
+Bildern oder Dateien bitte in sw.js (im Hauptordner) die Versionsnummer
+hochzählen, z. B.:
+    const VERSION = 'operator-2.0.0';   ->   const VERSION = 'operator-2.0.1';
+Dann holt sich die App beim nächsten Start sicher alles neu.
+
+
+6) SPÄTER GEPLANT (noch nicht eingebaut)
+----------------------------------------
+Gold und Items: Dann kommen hier auch Bilder für Münzen und Gegenstände dazu.
+Zum Beispiel das "Ablehnen" von Kampf-Angeboten in Taverne und Arena:
+Heute ist es 1x pro Tag gratis. Später kostet jedes weitere Ablehnen Gold.
