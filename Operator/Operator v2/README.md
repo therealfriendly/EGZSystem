@@ -1,3 +1,5 @@
+https://therealfriendly.github.io/EGZSystem/Operator/Operator%20v2/index.html#/setup
+
 # Operator
 
 Dein Labs Runner. **L**oss **A**lways **B**uilds **S**trength.
