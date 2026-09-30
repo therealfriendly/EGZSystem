@@ -1,4 +1,5 @@
 https://therealfriendly.github.io/EGZSystem/Operator/Operator%20v2/index.html#/setup
+<img width="374" height="379" alt="grafik" src="https://github.com/user-attachments/assets/2f1b3096-9c8e-4595-ab0e-9628e8196c41" />
 
 # Operator
 
